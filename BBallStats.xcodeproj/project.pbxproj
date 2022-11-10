@@ -7,23 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B9FAE8E290AE00200E3046E /* UpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE8D290AE00200E3046E /* UpButton.swift */; };
-		0B9FAE92290AE0E600E3046E /* DownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE91290AE0E600E3046E /* DownButton.swift */; };
-		0B9FAE94290AE25E00E3046E /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE93290AE25E00E3046E /* Data.swift */; };
+		0B08EECB291AEEEB00E23F70 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B08EECA291AEEEB00E23F70 /* Assets.xcassets */; };
+		0B2A25042912E92D00091401 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A25032912E92D00091401 /* StatsView.swift */; };
+		0B9FAE97290AF7B900E3046E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE96290AF7B900E3046E /* Game.swift */; };
+		0B9FAE99290AFA2800E3046E /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE98290AFA2800E3046E /* GameViewModel.swift */; };
+		0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE9B290B3B4000E3046E /* ResetView.swift */; };
+		0B9FAEA0290B523900E3046E /* BottomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE9F290B523900E3046E /* BottomTextView.swift */; };
 		0BAB184729036BF4006F2607 /* BBallStatsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184629036BF4006F2607 /* BBallStatsApp.swift */; };
-		0BAB184929036BF4006F2607 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184829036BF4006F2607 /* MainView.swift */; };
-		0BAB184B29036BF6006F2607 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BAB184A29036BF6006F2607 /* Assets.xcassets */; };
+		0BAB184929036BF4006F2607 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184829036BF4006F2607 /* GameView.swift */; };
 		0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0B9FAE8D290AE00200E3046E /* UpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpButton.swift; sourceTree = "<group>"; };
-		0B9FAE91290AE0E600E3046E /* DownButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownButton.swift; sourceTree = "<group>"; };
-		0B9FAE93290AE25E00E3046E /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		0B08EECA291AEEEB00E23F70 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B2A25032912E92D00091401 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		0B9FAE96290AF7B900E3046E /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		0B9FAE98290AFA2800E3046E /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameViewModel.swift; path = BBallStats/ViewModels/GameViewModel.swift; sourceTree = SOURCE_ROOT; };
+		0B9FAE9B290B3B4000E3046E /* ResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetView.swift; sourceTree = "<group>"; };
+		0B9FAE9F290B523900E3046E /* BottomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomTextView.swift; sourceTree = "<group>"; };
 		0BAB184329036BF4006F2607 /* BBallStats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BBallStats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BAB184629036BF4006F2607 /* BBallStatsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBallStatsApp.swift; sourceTree = "<group>"; };
-		0BAB184829036BF4006F2607 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		0BAB184A29036BF6006F2607 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0BAB184829036BF4006F2607 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -41,9 +45,10 @@
 		0B9FAE90290AE07900E3046E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0BAB184829036BF4006F2607 /* MainView.swift */,
-				0B9FAE8D290AE00200E3046E /* UpButton.swift */,
-				0B9FAE91290AE0E600E3046E /* DownButton.swift */,
+				0BAB184829036BF4006F2607 /* GameView.swift */,
+				0B9FAE9B290B3B4000E3046E /* ResetView.swift */,
+				0B9FAE9F290B523900E3046E /* BottomTextView.swift */,
+				0B2A25032912E92D00091401 /* StatsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -51,9 +56,17 @@
 		0B9FAE95290AE26400E3046E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0B9FAE93290AE25E00E3046E /* Data.swift */,
+				0B9FAE96290AF7B900E3046E /* Game.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		0B9FAE9A290AFA2E00E3046E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0B9FAE98290AFA2800E3046E /* GameViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		0BAB183A29036BF4006F2607 = {
@@ -75,10 +88,11 @@
 		0BAB184529036BF4006F2607 /* BBallStats */ = {
 			isa = PBXGroup;
 			children = (
-				0B9FAE95290AE26400E3046E /* Model */,
 				0BAB184629036BF4006F2607 /* BBallStatsApp.swift */,
+				0B08EECA291AEEEB00E23F70 /* Assets.xcassets */,
 				0B9FAE90290AE07900E3046E /* Views */,
-				0BAB184A29036BF6006F2607 /* Assets.xcassets */,
+				0B9FAE9A290AFA2E00E3046E /* ViewModels */,
+				0B9FAE95290AE26400E3046E /* Model */,
 				0BAB184C29036BF6006F2607 /* Preview Content */,
 			);
 			path = BBallStats;
@@ -150,8 +164,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B08EECB291AEEEB00E23F70 /* Assets.xcassets in Resources */,
 				0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */,
-				0BAB184B29036BF6006F2607 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,11 +176,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B9FAE8E290AE00200E3046E /* UpButton.swift in Sources */,
-				0B9FAE94290AE25E00E3046E /* Data.swift in Sources */,
-				0BAB184929036BF4006F2607 /* MainView.swift in Sources */,
+				0B9FAEA0290B523900E3046E /* BottomTextView.swift in Sources */,
+				0B9FAE97290AF7B900E3046E /* Game.swift in Sources */,
+				0BAB184929036BF4006F2607 /* GameView.swift in Sources */,
+				0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */,
 				0BAB184729036BF4006F2607 /* BBallStatsApp.swift in Sources */,
-				0B9FAE92290AE0E600E3046E /* DownButton.swift in Sources */,
+				0B9FAE99290AFA2800E3046E /* GameViewModel.swift in Sources */,
+				0B2A25042912E92D00091401 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +308,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BBallStats/Preview Content\"";
@@ -321,6 +338,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BBallStats/Preview Content\"";

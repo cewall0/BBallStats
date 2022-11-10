@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct BBallStatsApp: App {
+    @StateObject private var game = Game()
+    
     var body: some Scene {
         WindowGroup {
-            MainView()
+            GameView()
+                .environmentObject(game)
         }
     }
 }
