@@ -18,14 +18,14 @@ struct GameView: View {
             configuration.label
                 .frame(width: 110, height: 110)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundColor(Color.white)
                 .background(Color(UIColor(red:0/255, green: 100/255, blue: 0/255, alpha: 1.0)))
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.black, lineWidth: 4))
-                .padding(.leading,5)
-                .padding(.bottom,5)
-                .padding(.trailing,5)
+                .padding(.leading,3)
+                .padding(.bottom,3)
+                .padding(.trailing,3)
         }
     }
     
@@ -36,14 +36,14 @@ struct GameView: View {
             configuration.label
                 .frame(width: 110, height: 110)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundColor(Color.white)
                 .background(Color(UIColor(red:178/255, green: 34/255, blue: 34/255, alpha: 1.0)))
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.black, lineWidth: 4))
-                .padding(.leading,5)
-                .padding(.bottom,5)
-                .padding(.trailing,5)
+                .padding(.leading,3)
+                .padding(.bottom,3)
+                .padding(.trailing,3)
         }
     }
     // This is the Game View
@@ -81,7 +81,7 @@ struct GameView: View {
                             
                             // 3-pointers
                             HStack{
-                                Button("Made 3 pt"){
+                                Button("Made   3 pt"){
                                     game.makeThree()
                                 }
                                 .buttonStyle(GreenButton())
@@ -96,18 +96,23 @@ struct GameView: View {
                             
                             // Free Throws
                             HStack{
-                                Button("Free Throw"){
+                                Button("Made    Free Throw"){
                                     game.makeFT()
                                 }
                                 .buttonStyle(GreenButton())
 
                                 
-                                Button("Free Throw"){
+                                Button("Missed Free Throw"){
                                     game.missFT()
                                 }
                                 .buttonStyle(RedButton())
                                 
                             } // end HStack Free Throws
+                            
+                            Button("Turn     Over"){
+                                game.turnover()
+                            }
+                            .buttonStyle(RedButton())
                             
                         } // end VStack for basket buttons
                         
@@ -135,14 +140,12 @@ struct GameView: View {
                             }
                             .buttonStyle(GreenButton())
 
-                            
-                            
-                            Button("Turn     Over"){
-                                game.turnover()
+                            Button("Block"){
+                                game.block()
                             }
-                            .buttonStyle(RedButton())
+                            .buttonStyle(GreenButton())
                             
-                        } // end VStack of Reb, Asst, Stl, TO
+                        } // end VStack of Reb, Asst, Stl, Blocks
                     } // end top HStack with basket buttons, reb/asst/to, divider buttons
                 } // end regular button VStack
             } // end if !showFix
@@ -161,12 +164,12 @@ struct GameView: View {
                             
                             // 2-pointers
                             HStack{
-                                Button("Undo made 2"){
+                                Button("Undo Made 2"){
                                     game.removeMakeTwo()
                                 }
                                 .buttonStyle(GreenButton())
                                 
-                                Button("Undo  missed   2"){
+                                Button("Undo  Missed     2"){
                                     game.removeMissTwo()
                                 }
                                 .buttonStyle(RedButton())
@@ -175,12 +178,12 @@ struct GameView: View {
                             
                             // 3-pointers
                             HStack{
-                                Button("Undo made 3"){
+                                Button("Undo Made 3"){
                                     game.removeMakeThree()
                                 }
                                 .buttonStyle(GreenButton())
                                 
-                                Button("Undo   missed   3"){
+                                Button("Undo   Missed     3"){
                                     game.removeMissThree()
                                 }
                                 .buttonStyle(RedButton())
@@ -189,17 +192,22 @@ struct GameView: View {
                             
                             // Free Throws
                             HStack{
-                                Button("Undo made      FT"){
+                                Button("Undo Made      FT"){
                                     game.removeMakeFT()
                                 }
                                 .buttonStyle(GreenButton())
                                 
-                                Button("Undo missed    FT"){
+                                Button("Undo Missed    FT"){
                                     game.removeMissFT()
                                 }
                                 .buttonStyle(RedButton())
                                 
                             } // end HStack Free Throws
+                            
+                            Button("Undo       TO"){
+                                game.removeTurnover()
+                            }
+                            .buttonStyle(RedButton())
                             
                         } // end VStack for basket buttons
                         
@@ -218,17 +226,17 @@ struct GameView: View {
                             Button("Undo Assist"){
                                 game.removeAssist()
                             }
-                            .buttonStyle(RedButton())
+                            .buttonStyle(GreenButton())
                             
                             Button("Undo Steal"){
                                 game.removeSteal()
                             }
-                            .buttonStyle(RedButton())
+                            .buttonStyle(GreenButton())
                             
-                            Button("Undo       TO"){
-                                game.removeTurnover()
+                            Button("Undo       Block"){
+                                game.removeBlock()
                             }
-                            .buttonStyle(RedButton())
+                            .buttonStyle(GreenButton())
                             
                         } // end VStack of Reb, Asst, Stl, TO
                     } // end top HStack with basket buttons, reb/asst/to, divider buttons
@@ -242,16 +250,15 @@ struct GameView: View {
                     .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
                     .tint(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
                     .toggleStyle(.button)
-                    .padding()
+//                    .padding()
                 
                 
             } // end HStack
             
-            // Blank line between fix button and the stats
 
                 StatsView(game: game)
             
-            Text("          ")
+//            Text("          ")
             NavigationLink(
                 destination: ResetView().navigationBarBackButtonHidden(true),
                 label:{

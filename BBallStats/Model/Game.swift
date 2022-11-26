@@ -17,6 +17,7 @@ class Game: ObservableObject {
     @Published var rebounds = 0
     @Published var assists = 0
     @Published var steals = 0
+    @Published var blocks = 0
     @Published var turnovers = 0
     @Published var freeThrowsMade = 0
     @Published var freeThrowsAttempted = 0
@@ -112,6 +113,10 @@ class Game: ObservableObject {
         steals = steals + 1
     }
     
+    func block(){
+        blocks = blocks + 1
+    }
+    
     func removeAssist(){
         if assists != 0 {
             assists = assists - 1
@@ -121,6 +126,12 @@ class Game: ObservableObject {
     func removeSteal(){
         if steals != 0 {
             steals = steals - 1
+        }
+    }
+    
+    func removeBlock(){
+        if blocks != 0 {
+            blocks = blocks - 1
         }
     }
 

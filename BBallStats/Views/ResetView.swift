@@ -35,6 +35,7 @@ struct ResetView: View {
                             game.rebounds = 0
                             game.assists = 0
                             game.steals = 0
+                            game.blocks = 0
                             game.turnovers = 0
                             game.freeThrowsMade = 0
                             game.freeThrowsAttempted = 0
