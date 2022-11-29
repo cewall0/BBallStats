@@ -22,11 +22,12 @@ struct ResetView: View {
                     Text("             ")
                 }
                 .font(.system(size: 40, weight: .bold))
+                .padding()
                 
                 HStack{
                     
                     Button("Yes"){
-                            //Do somethings here
+                            //Then, reset all of the stats
                             game.totalPoints = 0
                             game.twoPointersMade = 0
                             game.twoPointersAttempted = 0
@@ -42,14 +43,15 @@ struct ResetView: View {
                             //Navigate
                             dismiss()
                         }
-                     .font(.system(size: 24, weight: .bold))
+                     .font(.system(size: 30, weight: .bold))
                         .padding()
 
                     
                     Button("No") {
+                        // Do nothing
                         dismiss()
                     }
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: 30, weight: .bold))
                         .padding()
 
                     

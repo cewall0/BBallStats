@@ -78,6 +78,23 @@ struct GameView: View {
             // vertical the whole GameView screeen
         VStack {
             
+            // Reset Button
+            NavigationLink(
+                destination: ResetView().navigationBarBackButtonHidden(true),
+                label:{
+                    Text("Reset")
+                })
+            .font(.system(size: 30, weight: .bold))
+            .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
+            
+            Text("             ")
+            
+            // Stats
+            StatsView(game: game)
+            
+            Text("             ")
+
+            
             // if fix Toggle is off, show regular buttons
             if !showFix {
                 
@@ -525,18 +542,7 @@ struct GameView: View {
                 
                 
             } // end HStack
-            
-
-                StatsView(game: game)
-            
-//            Text("          ")
-            NavigationLink(
-                destination: ResetView().navigationBarBackButtonHidden(true),
-                label:{
-                    Text("Reset")
-                })
-            .font(.system(size: 30, weight: .bold))
-            .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
+     
             } // end VStack for screeen
         .navigationTitle("")
         } // end Navigation View
