@@ -9,6 +9,8 @@ import SwiftUI
 
 struct StatsView: View {
     @ObservedObject var game: Game
+    @State private var made2IsPressed = false
+
 
     var body: some View {
 //        Text("          ")
@@ -18,6 +20,17 @@ struct StatsView: View {
             Text("\(game.twoPointersMade)-\(game.twoPointersAttempted) (2-pt)")
         } // end HStack
         .font(.system(size: 23, weight: .bold))
+        .scaleEffect(made2IsPressed ? 1.2 : 1.0)
+        .opacity(made2IsPressed ? 0.6 : 1.0).pressEvents {
+            // On press
+            withAnimation(.easeInOut(duration: 0.1)) {
+                made2IsPressed = true
+            }
+        } onRelease: {
+            withAnimation {
+                made2IsPressed = false
+            }
+        }
         
         HStack{
             Text("\(game.threePointersMade)-\(game.threePointersAttempted) (3-pt)")
