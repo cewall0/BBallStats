@@ -1,6 +1,6 @@
 //
 //  ResetView.swift
-//  BBallStats
+//  BBaller Stats
 //
 //  Created by Chad Wallace on 10/27/22.
 //
@@ -13,6 +13,10 @@ struct ResetView: View {
     @EnvironmentObject var game: Game
     @Environment(\.dismiss) private var dismiss
     
+    var deviceHeight: CGFloat {
+        UIScreen.main.bounds.height
+    }
+    
     var body: some View {
 
             
@@ -21,7 +25,7 @@ struct ResetView: View {
                     Text("Are you sure you want to reset the stats?")
                     Text("             ")
                 }
-                .font(.system(size: 40, weight: .bold))
+                .font(.system(size: deviceHeight/770 * 40, weight: .bold))
                 .padding()
                 
                 HStack{
@@ -43,16 +47,16 @@ struct ResetView: View {
                             //Navigate
                             dismiss()
                         }
-                     .font(.system(size: 30, weight: .bold))
-                        .padding()
+                     .font(.system(size: deviceHeight/770 * 40, weight: .bold))
+                        .padding(30)
 
                     
                     Button("No") {
                         // Do nothing
                         dismiss()
                     }
-                    .font(.system(size: 30, weight: .bold))
-                        .padding()
+                    .font(.system(size: deviceHeight/770 * 40, weight: .bold))
+                        .padding(30)
 
                     
                 } // end HStack

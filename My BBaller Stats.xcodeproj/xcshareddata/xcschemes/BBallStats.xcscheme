@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0BAB184229036BF4006F2607"
-               BuildableName = "BBallStats.app"
-               BlueprintName = "BBallStats"
-               ReferencedContainer = "container:BBallStats.xcodeproj">
+               BuildableName = "My BBaller Stats.app"
+               BlueprintName = "My BBaller Stats"
+               ReferencedContainer = "container:My BBaller Stats.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0BAB184229036BF4006F2607"
-            BuildableName = "BBallStats.app"
-            BlueprintName = "BBallStats"
-            ReferencedContainer = "container:BBallStats.xcodeproj">
+            BuildableName = "My BBaller Stats.app"
+            BlueprintName = "My BBaller Stats"
+            ReferencedContainer = "container:My BBaller Stats.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0BAB184229036BF4006F2607"
-            BuildableName = "BBallStats.app"
-            BlueprintName = "BBallStats"
-            ReferencedContainer = "container:BBallStats.xcodeproj">
+            BuildableName = "My BBaller Stats.app"
+            BlueprintName = "My BBaller Stats"
+            ReferencedContainer = "container:My BBaller Stats.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -73,6 +73,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "My BBaller Stats"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

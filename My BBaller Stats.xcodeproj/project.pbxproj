@@ -12,7 +12,7 @@
 		0B5EF05B2932C32E004DF4D6 /* ButtonPressAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5EF05A2932C32E004DF4D6 /* ButtonPressAction.swift */; };
 		0B9FAE97290AF7B900E3046E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE96290AF7B900E3046E /* Game.swift */; };
 		0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE9B290B3B4000E3046E /* ResetView.swift */; };
-		0BAB184729036BF4006F2607 /* BBallStatsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184629036BF4006F2607 /* BBallStatsApp.swift */; };
+		0BAB184729036BF4006F2607 /* My BBaller Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184629036BF4006F2607 /* My BBaller Stats.swift */; };
 		0BAB184929036BF4006F2607 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184829036BF4006F2607 /* GameView.swift */; };
 		0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -23,8 +23,8 @@
 		0B5EF05A2932C32E004DF4D6 /* ButtonPressAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ButtonPressAction.swift; path = BBallStats/ButtonPressAction.swift; sourceTree = SOURCE_ROOT; };
 		0B9FAE96290AF7B900E3046E /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		0B9FAE9B290B3B4000E3046E /* ResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetView.swift; sourceTree = "<group>"; };
-		0BAB184329036BF4006F2607 /* BBallStats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BBallStats.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0BAB184629036BF4006F2607 /* BBallStatsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBallStatsApp.swift; sourceTree = "<group>"; };
+		0BAB184329036BF4006F2607 /* My BBaller Stats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My BBaller Stats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BAB184629036BF4006F2607 /* My BBaller Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My BBaller Stats.swift"; sourceTree = "<group>"; };
 		0BAB184829036BF4006F2607 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +70,7 @@
 		0BAB184429036BF4006F2607 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0BAB184329036BF4006F2607 /* BBallStats.app */,
+				0BAB184329036BF4006F2607 /* My BBaller Stats.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,7 +78,7 @@
 		0BAB184529036BF4006F2607 /* BBallStats */ = {
 			isa = PBXGroup;
 			children = (
-				0BAB184629036BF4006F2607 /* BBallStatsApp.swift */,
+				0BAB184629036BF4006F2607 /* My BBaller Stats.swift */,
 				0B08EECA291AEEEB00E23F70 /* Assets.xcassets */,
 				0B9FAE90290AE07900E3046E /* Views */,
 				0B9FAE95290AE26400E3046E /* Model */,
@@ -98,9 +98,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0BAB184229036BF4006F2607 /* BBallStats */ = {
+		0BAB184229036BF4006F2607 /* My BBaller Stats */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0BAB185129036BF6006F2607 /* Build configuration list for PBXNativeTarget "BBallStats" */;
+			buildConfigurationList = 0BAB185129036BF6006F2607 /* Build configuration list for PBXNativeTarget "My BBaller Stats" */;
 			buildPhases = (
 				0BAB183F29036BF4006F2607 /* Sources */,
 				0BAB184029036BF4006F2607 /* Frameworks */,
@@ -110,9 +110,9 @@
 			);
 			dependencies = (
 			);
-			name = BBallStats;
+			name = "My BBaller Stats";
 			productName = BBallStats;
-			productReference = 0BAB184329036BF4006F2607 /* BBallStats.app */;
+			productReference = 0BAB184329036BF4006F2607 /* My BBaller Stats.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -130,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0BAB183E29036BF4006F2607 /* Build configuration list for PBXProject "BBallStats" */;
+			buildConfigurationList = 0BAB183E29036BF4006F2607 /* Build configuration list for PBXProject "My BBaller Stats" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -143,7 +143,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0BAB184229036BF4006F2607 /* BBallStats */,
+				0BAB184229036BF4006F2607 /* My BBaller Stats */,
 			);
 		};
 /* End PBXProject section */
@@ -169,7 +169,7 @@
 				0B5EF05B2932C32E004DF4D6 /* ButtonPressAction.swift in Sources */,
 				0BAB184929036BF4006F2607 /* GameView.swift in Sources */,
 				0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */,
-				0BAB184729036BF4006F2607 /* BBallStatsApp.swift in Sources */,
+				0BAB184729036BF4006F2607 /* My BBaller Stats.swift in Sources */,
 				0B2A25042912E92D00091401 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,20 +303,24 @@
 				DEVELOPMENT_TEAM = YZ8ZVD6D26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Fav BBaller";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_CFBundleDisplayName = "My BBaller Stats";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.WallaceApps.FavBBaller;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -335,20 +339,24 @@
 				DEVELOPMENT_TEAM = YZ8ZVD6D26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Fav BBaller";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_CFBundleDisplayName = "My BBaller Stats";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.WallaceApps.FavBBaller;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -358,7 +366,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0BAB183E29036BF4006F2607 /* Build configuration list for PBXProject "BBallStats" */ = {
+		0BAB183E29036BF4006F2607 /* Build configuration list for PBXProject "My BBaller Stats" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0BAB184F29036BF6006F2607 /* Debug */,
@@ -367,7 +375,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0BAB185129036BF6006F2607 /* Build configuration list for PBXNativeTarget "BBallStats" */ = {
+		0BAB185129036BF6006F2607 /* Build configuration list for PBXNativeTarget "My BBaller Stats" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0BAB185229036BF6006F2607 /* Debug */,

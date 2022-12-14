@@ -1,6 +1,6 @@
 //
 //  GameView.swift
-//  BBallStats
+//  BBaller Stats
 //
 //  Created by Chad Wallace on 10/21/22.
 //
@@ -35,13 +35,19 @@ struct GameView: View {
     @State private var undoturnoverIsPressed = false
 
 
+
+
     // Style information for Green button
     struct GreenButton: ButtonStyle {
+        var deviceHeight: CGFloat {
+            UIScreen.main.bounds.height
+        }
+        
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .frame(width: 110, height: 110)
+                .frame(width: deviceHeight * 0.135, height: deviceHeight * 0.135)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 22, weight: .bold))
+                .font(.system(size: deviceHeight/770 * 21, weight: .bold))
                 .foregroundColor(Color.white)
                 .background(Color(UIColor(red:0/255, green: 100/255, blue: 0/255, alpha: 1.0)))
                 .clipShape(Circle())
@@ -56,11 +62,14 @@ struct GameView: View {
     
     // Style information for Red button
     struct RedButton: ButtonStyle {
+        var deviceHeight: CGFloat {
+            UIScreen.main.bounds.height
+        }
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .frame(width: 110, height: 110)
+                .frame(width: deviceHeight * 0.135, height:deviceHeight * 0.135)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 22, weight: .bold))
+                .font(.system(size: deviceHeight/770 * 21, weight: .bold))
                 .foregroundColor(Color.white)
                 .background(Color(UIColor(red:178/255, green: 34/255, blue: 34/255, alpha: 1.0)))
                 .clipShape(Circle())
@@ -71,6 +80,9 @@ struct GameView: View {
         }
     }
     
+    var deviceHeight: CGFloat {
+        UIScreen.main.bounds.height
+    }
     // This is the Game View
     var body: some View {
         NavigationStack{
@@ -84,16 +96,16 @@ struct GameView: View {
                 label:{
                     Text("Reset")
                 })
-            .font(.system(size: 30, weight: .bold))
+            .font(.system(size: deviceHeight/770 * 30, weight: .bold))
             .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
             
-            Text("             ")
-            
+//            Text("             ")
+            Spacer()
             // Stats
             StatsView(game: game)
             
-            Text("             ")
-
+//            Text("             ")
+Spacer()
             
             // if fix Toggle is off, show regular buttons
             if !showFix {
@@ -237,7 +249,7 @@ struct GameView: View {
                         } // end VStack for basket buttons
                         
                         
-                        Divider().frame(width: 2).frame(height:400).background(Color.black)
+                        Divider().frame(width: 2).frame(height:deviceHeight/1.8).background(Color.black)
                         
                         // vertical stack of reb/asst/to buttons
                         VStack{
@@ -530,11 +542,12 @@ struct GameView: View {
                     } // end top HStack with basket buttons, reb/asst/to, divider buttons
                 } // end regular button VStack
             } // end if showFix
-              
+              Spacer()
             HStack{
                 // Toggle button to turn on if we need to fix a stat.
+                
                 Toggle("Fix", isOn: $showFix)
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.system(size: deviceHeight/770 * 30, weight: .bold))
                     .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
                     .tint(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
                     .toggleStyle(.button)
@@ -543,7 +556,7 @@ struct GameView: View {
                 
             } // end HStack
      
-            } // end VStack for screeen
+            }// end VStack for screeen
         .navigationTitle("")
         } // end Navigation View
     } // end var body

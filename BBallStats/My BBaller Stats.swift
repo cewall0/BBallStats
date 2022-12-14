@@ -1,6 +1,6 @@
 //
 //  BBallStatsApp.swift
-//  BBallStats
+//  BBaller Stats
 //
 //  Created by Chad Wallace on 10/21/22.
 //
