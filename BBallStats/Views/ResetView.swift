@@ -44,6 +44,7 @@ struct ResetView: View {
                             game.turnovers = 0
                             game.freeThrowsMade = 0
                             game.freeThrowsAttempted = 0
+                            game.fouls = 0
                             //Navigate
                             dismiss()
                         }

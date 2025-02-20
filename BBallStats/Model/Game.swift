@@ -21,6 +21,7 @@ class Game: ObservableObject {
     @Published var turnovers = 0
     @Published var freeThrowsMade = 0
     @Published var freeThrowsAttempted = 0
+    @Published var fouls = 0
 
     
     func makeTwo(){
@@ -117,6 +118,13 @@ class Game: ObservableObject {
         blocks = blocks + 1
     }
     
+    func foul(){
+        if fouls < 5 {
+            fouls = fouls + 1
+        }
+    }
+
+    
     func removeAssist(){
         if assists != 0 {
             assists = assists - 1
@@ -126,6 +134,12 @@ class Game: ObservableObject {
     func removeSteal(){
         if steals != 0 {
             steals = steals - 1
+        }
+    }
+    
+    func removeFoul(){
+        if fouls != 0 {
+            fouls = fouls - 1
         }
     }
     

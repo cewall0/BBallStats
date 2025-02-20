@@ -57,6 +57,8 @@ struct StatsView: View {
             Text("\(game.turnovers) TO")
             Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
             Text("\(game.blocks) Blks")
+            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
+            Text("\(game.fouls) Fls")
         }
         .font(.system(size: deviceHeight/770 * 30, weight: .bold))
 

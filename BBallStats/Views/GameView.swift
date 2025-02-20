@@ -22,6 +22,7 @@ struct GameView: View {
     @State private var stealIsPressed = false
     @State private var blockIsPressed = false
     @State private var turnoverIsPressed = false
+    @State private var foulIsPressed = false
     @State private var undomade2IsPressed = false
     @State private var undomissed2IsPressed = false
     @State private var undomade3IsPressed = false
@@ -33,6 +34,7 @@ struct GameView: View {
     @State private var undostealIsPressed = false
     @State private var undoblockIsPressed = false
     @State private var undoturnoverIsPressed = false
+    @State private var undofoulIsPressed = false
 
 
 
@@ -228,22 +230,40 @@ Spacer()
                                 }
                                 
                             } // end HStack Free Throws
-                            
-                            Button("Turn     Over"){
-                                game.turnover()
-                            }
-                            .buttonStyle(RedButton())
-                            .scaleEffect(turnoverIsPressed ? 1.1 : 1.0)
-                            .opacity(turnoverIsPressed ? 0.6 : 1.0).pressEvents {
-                                // On press
-                                withAnimation(.easeInOut(duration: 0.1)) {
-                                    turnoverIsPressed = true
+                            HStack{
+                                Button("Turn     Over"){
+                                    game.turnover()
                                 }
-                            } onRelease: {
-                                withAnimation {
-                                    turnoverIsPressed = false
+                                .buttonStyle(RedButton())
+                                .scaleEffect(turnoverIsPressed ? 1.1 : 1.0)
+                                .opacity(turnoverIsPressed ? 0.6 : 1.0).pressEvents {
+                                    // On press
+                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                        turnoverIsPressed = true
+                                    }
+                                } onRelease: {
+                                    withAnimation {
+                                        turnoverIsPressed = false
+                                    }
+                                }
+                                
+                                Button("Foul"){
+                                    game.foul()
+                                }
+                                .buttonStyle(RedButton())
+                                .scaleEffect(foulIsPressed ? 1.1 : 1.0)
+                                .opacity(foulIsPressed ? 0.6 : 1.0).pressEvents {
+                                    // On press
+                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                        foulIsPressed = true
+                                    }
+                                } onRelease: {
+                                    withAnimation {
+                                        foulIsPressed = false
+                                    }
                                 }
                             }
+                           
 
                             
                         } // end VStack for basket buttons
@@ -449,21 +469,40 @@ Spacer()
                                 
                             } // end HStack Free Throws
                             
-                            Button("Undo       TO"){
-                                game.removeTurnover()
-                            }
-                            .buttonStyle(RedButton())
-                            .scaleEffect(undoturnoverIsPressed ? 1.1 : 1.0)
-                            .opacity(undoturnoverIsPressed ? 0.6 : 1.0).pressEvents {
-                                // On press
-                                withAnimation(.easeInOut(duration: 0.1)) {
-                                    undoturnoverIsPressed = true
+                            HStack{
+                                Button("Undo       TO"){
+                                    game.removeTurnover()
                                 }
-                            } onRelease: {
-                                withAnimation {
-                                    undoturnoverIsPressed = false
+                                .buttonStyle(RedButton())
+                                .scaleEffect(undoturnoverIsPressed ? 1.1 : 1.0)
+                                .opacity(undoturnoverIsPressed ? 0.6 : 1.0).pressEvents {
+                                    // On press
+                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                        undoturnoverIsPressed = true
+                                    }
+                                } onRelease: {
+                                    withAnimation {
+                                        undoturnoverIsPressed = false
+                                    }
+                                }
+                                
+                                Button("Undo       Foul"){
+                                    game.removeFoul()
+                                }
+                                .buttonStyle(RedButton())
+                                .scaleEffect(undofoulIsPressed ? 1.1 : 1.0)
+                                .opacity(undofoulIsPressed ? 0.6 : 1.0).pressEvents {
+                                    // On press
+                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                        undofoulIsPressed = true
+                                    }
+                                } onRelease: {
+                                    withAnimation {
+                                        undofoulIsPressed = false
+                                    }
                                 }
                             }
+                           
                             
                         } // end VStack for basket buttons
                         
