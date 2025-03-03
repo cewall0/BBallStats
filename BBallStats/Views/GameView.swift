@@ -5,11 +5,14 @@
 //  Created by Chad Wallace on 10/21/22.
 //
 
+import Foundation
 import SwiftUI
+import Observation
 
 struct GameView: View {
 
-    @EnvironmentObject var game: Game
+    @Environment(Game.self) private var game
+    
     @State private var showFix = false
     @State private var made2IsPressed = false
     @State private var missed2IsPressed = false
@@ -91,20 +94,10 @@ struct GameView: View {
             
             // vertical the whole GameView screeen
         VStack {
-            
-            // Reset Button
-            NavigationLink(
-                destination: ResetView().navigationBarBackButtonHidden(true),
-                label:{
-                    Text("Reset")
-                })
-            .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-            .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            
-//            Text("             ")
+        
             Spacer()
             // Stats
-            StatsView(game: game)
+            StatsView()
             
 //            Text("             ")
 Spacer()
@@ -507,7 +500,7 @@ Spacer()
                         } // end VStack for basket buttons
                         
                         
-                        Divider().frame(width: 2).frame(height:400).background(Color.black)
+                        Divider().frame(width: 2).frame(height:deviceHeight/1.8).background(Color.black)
                         
                         // vertical stack of reb/asst/to buttons
                         VStack{
@@ -581,21 +574,55 @@ Spacer()
                     } // end top HStack with basket buttons, reb/asst/to, divider buttons
                 } // end regular button VStack
             } // end if showFix
-              Spacer()
-            HStack{
-                // Toggle button to turn on if we need to fix a stat.
-                
-                Toggle("Fix", isOn: $showFix)
-                    .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-                    .foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-                    .tint(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-                    .toggleStyle(.button)
-//                    .padding()
-                
-                
+            Spacer()
+
+            HStack(spacing: 20) { // Add spacing between Fix and Reset
+
+                // Toggle button for Fix
+                Toggle(isOn: $showFix) {
+                    Text("Fix")
+                        .font(.system(size: deviceHeight / 770 * 25, weight: .bold))
+                        .minimumScaleFactor(0.5) // Allows shrinking
+                        .lineLimit(1) // Ensures single line
+                        .frame(width: 100, height: 40) // Fixed size for uniformity
+                        .foregroundColor(.white)
+                        .background(showFix ? Color.blue : Color.gray) // Change color based on state
+                        .clipShape(Capsule()) // Rounded button
+                        .overlay(
+                            Capsule().stroke(Color.blue, lineWidth: 2) // Outline
+                        )
+                }
+                .toggleStyle(.button)
+
+                // Reset Button
+                NavigationLink(destination: ResetView().navigationBarBackButtonHidden(true)) {
+                    Text("Reset")
+                        .font(.system(size: deviceHeight / 770 * 25, weight: .bold))
+                        .minimumScaleFactor(0.5) // Allows shrinking
+                        .lineLimit(1) // Ensures single line
+                        .frame(width: 100, height: 40) //
+                        .foregroundColor(.white)
+                        .background(Color.red) // Red for emphasis
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule().stroke(Color.red.opacity(0.8), lineWidth: 2)
+                        )
+                }
+
             } // end HStack
-     
+            .padding(.vertical, 10)
+            
+            BannerAdView(adFormat: UIDevice.current.userInterfaceIdiom == .pad ? .leaderboard : .standardBanner, onShow: { print("Show Banner") })
+                .padding(.bottom, 10)
             }// end VStack for screeen
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white)
+        .edgesIgnoringSafeArea(.bottom)
+        .onAppear(perform: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            requestPermission()
+                        }
+                    })
         .navigationTitle("")
         } // end Navigation View
     } // end var body

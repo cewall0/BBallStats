@@ -1,0 +1,6 @@
+framework module Pods_My_BBaller_Stats {
+  umbrella header "Pods-My BBaller Stats-umbrella.h"
+
+  export *
+  module * { export * }
+}

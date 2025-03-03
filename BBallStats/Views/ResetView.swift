@@ -5,12 +5,14 @@
 //  Created by Chad Wallace on 10/27/22.
 //
 
+import Foundation
 import SwiftUI
+import Observation
 
 struct ResetView: View {
     
     // Let's always listen to the GameViewModel for changes to make to this GameView
-    @EnvironmentObject var game: Game
+    @Environment(Game.self) private var game
     @Environment(\.dismiss) private var dismiss
     
     var deviceHeight: CGFloat {

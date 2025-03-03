@@ -5,25 +5,26 @@
 //  Created by Chad Wallace on 10/27/22.
 //
 
-import Foundation
+import SwiftUI
+import Observation
 
-class Game: ObservableObject {
+@Observable
+final class Game {
     // All of these properties can change. We want them available to other views.
-    @Published var totalPoints = 0
-    @Published var twoPointersMade = 0
-    @Published var twoPointersAttempted = 0
-    @Published var threePointersMade = 0
-    @Published var threePointersAttempted = 0
-    @Published var rebounds = 0
-    @Published var assists = 0
-    @Published var steals = 0
-    @Published var blocks = 0
-    @Published var turnovers = 0
-    @Published var freeThrowsMade = 0
-    @Published var freeThrowsAttempted = 0
-    @Published var fouls = 0
+    var totalPoints = 0
+    var twoPointersMade = 0
+    var twoPointersAttempted = 0
+    var threePointersMade = 0
+    var threePointersAttempted = 0
+    var rebounds = 0
+    var assists = 0
+    var steals = 0
+    var blocks = 0
+    var turnovers = 0
+    var freeThrowsMade = 0
+    var freeThrowsAttempted = 0
+    var fouls = 0
 
-    
     func makeTwo(){
         twoPointersMade += 1
         twoPointersAttempted += 1
@@ -43,7 +44,7 @@ class Game: ObservableObject {
     }
 
     func removeMissTwo(){
-        if twoPointersAttempted != 0 {
+        if twoPointersAttempted != 0 && twoPointersAttempted > twoPointersMade {
             twoPointersAttempted = twoPointersAttempted - 1
         }
     }
@@ -67,7 +68,7 @@ class Game: ObservableObject {
     }
 
     func removeMissThree(){
-        if threePointersAttempted != 0 {
+        if threePointersAttempted != 0 && threePointersAttempted > threePointersMade {
             threePointersAttempted = threePointersAttempted - 1
         }
     }
@@ -91,7 +92,7 @@ class Game: ObservableObject {
     }
 
     func removeMissFT(){
-        if freeThrowsAttempted != 0 {
+        if freeThrowsAttempted != 0 && freeThrowsAttempted > freeThrowsMade {
             freeThrowsAttempted = freeThrowsAttempted - 1
         }
     }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StatsView: View {
-    @ObservedObject var game: Game
+    @Environment(Game.self) private var game
     @State private var made2IsPressed = false
     
     var deviceHeight: CGFloat {
@@ -17,7 +17,7 @@ struct StatsView: View {
 
 
     var body: some View {
-//        Text("          ")
+        Text("          ")
         HStack{
             Text("\(game.totalPoints) (tot pts)")
             Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
