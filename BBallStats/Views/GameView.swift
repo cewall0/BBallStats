@@ -613,6 +613,14 @@ Spacer()
             } // end HStack
             .padding(.vertical, 10)
             
+            if WallaceAds.privacyOptionsRequired {
+                Button("Ad privacy settings") {
+                    WallaceAds.presentPrivacyOptions()
+                }
+                .font(.footnote)
+                .foregroundColor(.gray)
+            }
+
             BannerAdView()
                 .padding(.bottom, 10)
             }// end VStack for screeen
