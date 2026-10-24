@@ -16,7 +16,7 @@
 		0BAB184929036BF4006F2607 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184829036BF4006F2607 /* GameView.swift */; };
 		0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */; };
 		0BD0C7D32D6831F2000C696E /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD0C7D22D6831F2000C696E /* SplashScreenView.swift */; };
-		12CFB710E2121D2AFA6156E5 /* Pods_My_BBaller_Stats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2A9C3891414FAA483BDAE24 /* Pods_My_BBaller_Stats.framework */; };
+		3D992DA89BC77D316665AD30 /* WallaceAds in Frameworks */ = {isa = PBXBuildFile; productRef = 92BCEE417BC231B309776D08 /* WallaceAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,13 +31,20 @@
 		0BAB184829036BF4006F2607 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0BD0C7D22D6831F2000C696E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
-		A2A9C3891414FAA483BDAE24 /* Pods_My_BBaller_Stats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_My_BBaller_Stats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2F45884BDE7616D2C4459BA /* Pods-My BBaller Stats.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-My BBaller Stats.debug.xcconfig"; path = "Target Support Files/Pods-My BBaller Stats/Pods-My BBaller Stats.debug.xcconfig"; sourceTree = "<group>"; };
-		F6598BFBE4E56CE72ACA8D20 /* Pods-My BBaller Stats.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-My BBaller Stats.release.xcconfig"; path = "Target Support Files/Pods-My BBaller Stats/Pods-My BBaller Stats.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0B2FFE6D2D6781E500CE0DCB /* Ad */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Ad; sourceTree = "<group>"; };
+		0B2FFE6D2D6781E500CE0DCB /* Ad */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Ad;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				12CFB710E2121D2AFA6156E5 /* Pods_My_BBaller_Stats.framework in Frameworks */,
+				3D992DA89BC77D316665AD30 /* WallaceAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +85,6 @@
 				0BAB184529036BF4006F2607 /* BBallStats */,
 				0BAB184429036BF4006F2607 /* Products */,
 				137EC828F30CECD9FE3E734C /* Pods */,
-				EF858C24DE395BF67C8A814C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,18 +121,8 @@
 		137EC828F30CECD9FE3E734C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				D2F45884BDE7616D2C4459BA /* Pods-My BBaller Stats.debug.xcconfig */,
-				F6598BFBE4E56CE72ACA8D20 /* Pods-My BBaller Stats.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		EF858C24DE395BF67C8A814C /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A2A9C3891414FAA483BDAE24 /* Pods_My_BBaller_Stats.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,11 +132,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0BAB185129036BF6006F2607 /* Build configuration list for PBXNativeTarget "My BBaller Stats" */;
 			buildPhases = (
-				B4FA1938317FA4A1F59C497D /* [CP] Check Pods Manifest.lock */,
 				0BAB183F29036BF4006F2607 /* Sources */,
 				0BAB184029036BF4006F2607 /* Frameworks */,
 				0BAB184129036BF4006F2607 /* Resources */,
-				9A3C28FF31161DF129642C1F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -150,6 +144,9 @@
 				0B2FFE6D2D6781E500CE0DCB /* Ad */,
 			);
 			name = "My BBaller Stats";
+			packageProductDependencies = (
+				92BCEE417BC231B309776D08 /* WallaceAds */,
+			);
 			productName = BBallStats;
 			productReference = 0BAB184329036BF4006F2607 /* My BBaller Stats.app */;
 			productType = "com.apple.product-type.application";
@@ -178,6 +175,9 @@
 				Base,
 			);
 			mainGroup = 0BAB183A29036BF4006F2607;
+			packageReferences = (
+				482F764B630629F9DF6CABCE /* XCRemoteSwiftPackageReference "WallaceAds" */,
+			);
 			productRefGroup = 0BAB184429036BF4006F2607 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -198,48 +198,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		9A3C28FF31161DF129642C1F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-My BBaller Stats/Pods-My BBaller Stats-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-My BBaller Stats/Pods-My BBaller Stats-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-My BBaller Stats/Pods-My BBaller Stats-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B4FA1938317FA4A1F59C497D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-My BBaller Stats-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0BAB183F29036BF4006F2607 /* Sources */ = {
@@ -377,7 +335,6 @@
 		};
 		0BAB185229036BF6006F2607 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2F45884BDE7616D2C4459BA /* Pods-My BBaller Stats.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -415,7 +372,6 @@
 		};
 		0BAB185329036BF6006F2607 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6598BFBE4E56CE72ACA8D20 /* Pods-My BBaller Stats.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -473,6 +429,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		482F764B630629F9DF6CABCE /* XCRemoteSwiftPackageReference "WallaceAds" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/cewall0/WallaceAds.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		92BCEE417BC231B309776D08 /* WallaceAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 482F764B630629F9DF6CABCE /* XCRemoteSwiftPackageReference "WallaceAds" */;
+			productName = WallaceAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0BAB183B29036BF4006F2607 /* Project object */;
 }

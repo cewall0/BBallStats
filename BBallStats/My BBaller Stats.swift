@@ -6,34 +6,22 @@
 //
 
 import SwiftUI
-import AppTrackingTransparency
-import GoogleMobileAds
+import WallaceAds
 
 @main
 struct BBallStatsApp: App {
     @State private var game = Game()
     
     init() {
-        // Step 1: Print the AdMob App ID from Info.plist
-        if let appID = Bundle.main.object(forInfoDictionaryKey: "GADApplicationIdentifier") as? String {
-            print("Google Mobile Ads App ID found: \(appID)")
-        } else {
-            print("⚠️ Google Mobile Ads App ID NOT FOUND in Info.plist!")
-        }
-
-        // Step 2: Request tracking authorization
-        if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
-            // User hasn't made a choice yet, could show a prompt
-        } else {
-            // Initialize AdMob
-            ATTrackingManager.requestTrackingAuthorization { status in
-                // Step 3: Initialize Google Mobile Ads SDK
-                DispatchQueue.main.async {
-                    GADMobileAds.sharedInstance().start(completionHandler: nil)
-                    print("✅ Google Mobile Ads SDK initialized")
-                }
-            }
-        }
+        #if DEBUG
+        let useTestAds = true
+        #else
+        let useTestAds = false
+        #endif
+        WallaceAds.configure(.init(
+            bannerID: "ca-app-pub-5511806561009019/3713108205",
+            useTestAds: useTestAds
+        ))
     }
     
     var body: some Scene {

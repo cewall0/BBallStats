@@ -1,0 +1,33 @@
+{
+  "originHash" : "76b4356a7c21803cc91928f26ad8ee598bcbc85b881ac4bc87e559edfe6dd69e",
+  "pins" : [
+    {
+      "identity" : "swift-package-manager-google-mobile-ads",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
+      "state" : {
+        "revision" : "d1fa1f5c1dfe3b43d56c73f4de388ad3316618bc",
+        "version" : "13.11.0"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-user-messaging-platform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
+      "state" : {
+        "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
+        "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "wallaceads",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cewall0/WallaceAds.git",
+      "state" : {
+        "revision" : "06abdf72fb81055ff613723b7ef7d88ca8c84fb9",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

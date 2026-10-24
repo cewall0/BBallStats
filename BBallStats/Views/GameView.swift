@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import WallaceAds
 import Observation
 
 struct GameView: View {
@@ -612,7 +613,7 @@ Spacer()
             } // end HStack
             .padding(.vertical, 10)
             
-            BannerAdView(adFormat: UIDevice.current.userInterfaceIdiom == .pad ? .leaderboard : .standardBanner, onShow: { print("Show Banner") })
+            BannerAdView()
                 .padding(.bottom, 10)
             }// end VStack for screeen
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -620,7 +621,7 @@ Spacer()
         .edgesIgnoringSafeArea(.bottom)
         .onAppear(perform: {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            requestPermission()
+                            WallaceAds.start()
                         }
                     })
         .navigationTitle("")
