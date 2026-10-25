@@ -621,7 +621,7 @@ Spacer()
                 .foregroundColor(.gray)
             }
 
-            BannerAdView()
+            BannerAdView(size: .compact)
                 .padding(.bottom, 10)
             }// end VStack for screeen
         .frame(maxWidth: .infinity, maxHeight: .infinity)
