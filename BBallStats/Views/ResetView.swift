@@ -8,12 +8,15 @@
 import Foundation
 import SwiftUI
 import Observation
+import StoreKit
 
 struct ResetView: View {
     
     // Let's always listen to the GameViewModel for changes to make to this GameView
     @Environment(Game.self) private var game
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
+    @AppStorage("completedGames") private var completedGames = 0
     
     var deviceHeight: CGFloat {
         UIScreen.main.bounds.height
@@ -47,6 +50,12 @@ struct ResetView: View {
                             game.freeThrowsMade = 0
                             game.freeThrowsAttempted = 0
                             game.fouls = 0
+                            game.save()
+                            // A reset ends a game: ask for a rating after the 3rd, then every 10th (iOS limits how often it shows)
+                            completedGames += 1
+                            if completedGames == 3 || completedGames % 10 == 0 {
+                                requestReview()
+                            }
                             //Navigate
                             dismiss()
                         }

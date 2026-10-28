@@ -9,7 +9,7 @@ import SwiftUI
 import Observation
 
 @Observable
-final class Game {
+final class Game: Codable {
     // All of these properties can change. We want them available to other views.
     var totalPoints = 0
     var twoPointersMade = 0
@@ -24,6 +24,42 @@ final class Game {
     var freeThrowsMade = 0
     var freeThrowsAttempted = 0
     var fouls = 0
+
+    // MARK: - Saving stats between launches
+
+    // The underscored names are the @Observable backing storage.
+    enum CodingKeys: String, CodingKey {
+        case _totalPoints = "totalPoints"
+        case _twoPointersMade = "twoPointersMade"
+        case _twoPointersAttempted = "twoPointersAttempted"
+        case _threePointersMade = "threePointersMade"
+        case _threePointersAttempted = "threePointersAttempted"
+        case _rebounds = "rebounds"
+        case _assists = "assists"
+        case _steals = "steals"
+        case _blocks = "blocks"
+        case _turnovers = "turnovers"
+        case _freeThrowsMade = "freeThrowsMade"
+        case _freeThrowsAttempted = "freeThrowsAttempted"
+        case _fouls = "fouls"
+    }
+
+    static let savedStatsKey = "savedStats"
+
+    /// The stats from when the app last closed, or a fresh game.
+    static func loadSaved() -> Game {
+        guard let data = UserDefaults.standard.data(forKey: savedStatsKey),
+              let game = try? JSONDecoder().decode(Game.self, from: data) else { return Game() }
+        return game
+    }
+
+    func save() {
+        if let data = try? JSONEncoder().encode(self) {
+            UserDefaults.standard.set(data, forKey: Game.savedStatsKey)
+        }
+    }
+
+    init() {}
 
     func makeTwo(){
         twoPointersMade += 1

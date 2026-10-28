@@ -194,6 +194,7 @@ Spacer()
                                     game.makeFT()
                                 }
                                 .buttonStyle(GreenButton())
+                            .accessibilityLabel("Made free throw")
                                 .scaleEffect(madeFTIsPressed ? 1.1 : 1.0)
                                 .opacity(madeFTIsPressed ? 0.6 : 1.0).pressEvents {
                                     // On press
@@ -229,6 +230,7 @@ Spacer()
                                     game.turnover()
                                 }
                                 .buttonStyle(RedButton())
+                            .accessibilityLabel("Turnover")
                                 .scaleEffect(turnoverIsPressed ? 1.1 : 1.0)
                                 .opacity(turnoverIsPressed ? 0.6 : 1.0).pressEvents {
                                     // On press
@@ -272,6 +274,7 @@ Spacer()
                                 game.rebound()
                             }
                             .buttonStyle(GreenButton())
+                            .accessibilityLabel("Rebound")
                             .scaleEffect(reboundIsPressed ? 1.1 : 1.0)
                             .opacity(reboundIsPressed ? 0.6 : 1.0).pressEvents {
                                 // On press
@@ -433,6 +436,7 @@ Spacer()
                                     game.removeMakeFT()
                                 }
                                 .buttonStyle(GreenButton())
+                            .accessibilityLabel("Undo made free throw")
                                 .scaleEffect(undomadeFTIsPressed ? 1.1 : 1.0)
                                 .opacity(undomadeFTIsPressed ? 0.6 : 1.0).pressEvents {
                                     // On press
@@ -449,6 +453,7 @@ Spacer()
                                     game.removeMissFT()
                                 }
                                 .buttonStyle(RedButton())
+                            .accessibilityLabel("Undo missed free throw")
                                 .scaleEffect(undomissedFTIsPressed ? 1.1 : 1.0)
                                 .opacity(undomissedFTIsPressed ? 0.6 : 1.0).pressEvents {
                                     // On press
@@ -468,6 +473,7 @@ Spacer()
                                     game.removeTurnover()
                                 }
                                 .buttonStyle(RedButton())
+                            .accessibilityLabel("Undo turnover")
                                 .scaleEffect(undoturnoverIsPressed ? 1.1 : 1.0)
                                 .opacity(undoturnoverIsPressed ? 0.6 : 1.0).pressEvents {
                                     // On press
@@ -510,6 +516,7 @@ Spacer()
                                 game.removeRebound()
                             }
                             .buttonStyle(GreenButton())
+                            .accessibilityLabel("Undo rebound")
                             .scaleEffect(undoreboundIsPressed ? 1.1 : 1.0)
                             .opacity(undoreboundIsPressed ? 0.6 : 1.0).pressEvents {
                                 // On press

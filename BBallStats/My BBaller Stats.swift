@@ -10,7 +10,8 @@ import WallaceAds
 
 @main
 struct BBallStatsApp: App {
-    @State private var game = Game()
+    @State private var game = Game.loadSaved()
+    @Environment(\.scenePhase) private var scenePhase
     
     init() {
         #if DEBUG
@@ -28,6 +29,10 @@ struct BBallStatsApp: App {
         WindowGroup {
                 SplashScreenView()
                 .environment(game)
+                .onChange(of: scenePhase) { _, phase in
+                    if phase != .active { game.save() } // keep the stats if iOS closes the app
+                }
+                .onAppear { UIApplication.shared.isIdleTimerDisabled = true } // keep the screen awake during play
         }
     }
 }
