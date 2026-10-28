@@ -21,7 +21,6 @@ struct BBallStatsApp: App {
         #endif
         WallaceAds.configure(.init(
             bannerID: "ca-app-pub-5511806561009019/3713108205",
-            interstitialID: "ca-app-pub-5511806561009019/7043277180",
             useTestAds: useTestAds
         ))
     }
