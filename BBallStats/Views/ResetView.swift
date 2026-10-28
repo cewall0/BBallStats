@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Observation
 import StoreKit
+import WallaceAds
 
 struct ResetView: View {
     
@@ -51,13 +52,15 @@ struct ResetView: View {
                             game.freeThrowsAttempted = 0
                             game.fouls = 0
                             game.save()
-                            // A reset ends a game: ask for a rating after the 3rd, then every 10th (iOS limits how often it shows)
+                            // A reset ends a game: ask for a rating after the 3rd, then every 10th (iOS limits how often it shows).
+                            // Otherwise it's a natural break for an interstitial.
                             completedGames += 1
                             if completedGames == 3 || completedGames % 10 == 0 {
                                 requestReview()
+                                dismiss()
+                            } else {
+                                Interstitials.shared.showIfReady { dismiss() }
                             }
-                            //Navigate
-                            dismiss()
                         }
                      .font(.system(size: deviceHeight/770 * 40, weight: .bold))
                         .padding(30)
