@@ -68,17 +68,24 @@ final class SeasonStore {
 
     private(set) var players: [Player] = []
     private(set) var games: [GameRecord] = []
-    var currentPlayerID: UUID? {
+    private(set) var currentPlayerID: UUID? {
         didSet { UserDefaults.standard.set(currentPlayerID?.uuidString, forKey: "currentPlayerID") }
     }
+    /// Each player's game in progress while another player is on screen
+    private var liveGames: [UUID: StatLine] = [:]
 
-    private struct Saved: Codable { var players: [Player]; var games: [GameRecord] }
+    private struct Saved: Codable {
+        var players: [Player]
+        var games: [GameRecord]
+        var liveGames: [UUID: StatLine]? = nil   // added in 1.5; older files don't have it
+    }
     private let url = URL.applicationSupportDirectory.appending(path: "season.json")
 
     private init() {
         if let data = try? Data(contentsOf: url), let saved = try? JSONDecoder().decode(Saved.self, from: data) {
             players = saved.players
             games = saved.games
+            liveGames = saved.liveGames ?? [:]
         }
         #if DEBUG
         if CommandLine.arguments.contains("-seedDemoSeason") { seedDemo() }
@@ -108,17 +115,55 @@ final class SeasonStore {
         save()
     }
 
-    /// Removes the player and all of their saved games.
-    func delete(_ player: Player) {
+    /// Puts `id` on screen: parks the current player's game in progress and brings back theirs.
+    func switchTo(_ id: UUID, game: Game) {
+        guard id != currentPlayerID, players.contains(where: { $0.id == id }) else { return }
+        if let current = currentPlayerID { liveGames[current] = game.line }
+        currentPlayerID = id
+        game.line = liveGames.removeValue(forKey: id) ?? StatLine()
+        game.save()
+        save()
+    }
+
+    /// Removes the player, their saved games and their game in progress.
+    func delete(_ player: Player, game: Game) {
+        if currentPlayerID == player.id, let next = players.first(where: { $0.id != player.id }) {
+            switchTo(next.id, game: game)
+        }
         players.removeAll { $0.id == player.id }
         games.removeAll { $0.playerID == player.id }
-        if currentPlayerID == player.id { currentPlayerID = players.first?.id }
+        liveGames[player.id] = nil
+        if currentPlayerID == player.id { currentPlayerID = nil }
         save()
     }
 
     func record(_ line: StatLine, opponent: String, for playerID: UUID) {
         games.append(GameRecord(playerID: playerID, date: .now, opponent: opponent.trimmingCharacters(in: .whitespaces), line: line))
         save()
+    }
+
+    /// Players other than the one on screen who have a game in progress
+    var playersWithLiveGames: [Player] { players.filter { hasLiveGame($0.id) } }
+
+    /// End of a team game: saves the on-screen game and every paused one, then clears them all.
+    func recordAll(onScreen line: StatLine, opponent: String) {
+        let date = Date.now
+        let trimmed = opponent.trimmingCharacters(in: .whitespaces)
+        if let current = currentPlayerID, line != StatLine() {
+            games.append(GameRecord(playerID: current, date: date, opponent: trimmed, line: line))
+        }
+        for player in playersWithLiveGames {
+            if let paused = liveGames[player.id] {
+                games.append(GameRecord(playerID: player.id, date: date, opponent: trimmed, line: paused))
+            }
+        }
+        liveGames = [:]
+        save()
+    }
+
+    /// True when a player other than the one on screen has a game in progress
+    func hasLiveGame(_ playerID: UUID) -> Bool {
+        playerID != currentPlayerID && liveGames[playerID].map { $0 != StatLine() } == true
     }
 
     func delete(_ game: GameRecord) {
@@ -128,7 +173,8 @@ final class SeasonStore {
 
     private func save() {
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try? JSONEncoder().encode(Saved(players: players, games: games)).write(to: url, options: [.atomic, .completeFileProtection])
+        try? JSONEncoder().encode(Saved(players: players, games: games, liveGames: liveGames))
+            .write(to: url, options: [.atomic, .completeFileProtection])
     }
 
     #if DEBUG
@@ -136,7 +182,7 @@ final class SeasonStore {
     private func seedDemo() {
         let ava = Player(name: "Ava")
         let jack = Player(name: "Jack")
-        players = [ava, jack]
+        players = [ava, jack] + ["Mia", "Leo", "Zoe", "Sam"].map { Player(name: $0) }
         let opponents = ["Eagles", "Wildcats", "Hornets", "Tigers", "Panthers", "Rockets", "Falcons", "Bulldogs"]
         let points = [8, 12, 6, 14, 11, 16, 13, 18]
         games = opponents.enumerated().map { i, opp in

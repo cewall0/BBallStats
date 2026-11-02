@@ -54,6 +54,19 @@ struct ResetView: View {
                     Text("Save Game & Reset").font(.headline).frame(maxWidth: .infinity)
                 }
                 .disabled(season.players.isEmpty && newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
+                if !season.playersWithLiveGames.isEmpty {
+                    Button {
+                        season.recordAll(onScreen: game.line, opponent: opponent)
+                        reset()
+                    } label: {
+                        VStack {
+                            Text("Save All Players' Games & Reset").font(.headline)
+                            Text("Also saves " + season.playersWithLiveGames.map(\.name).formatted(.list(type: .and)))
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
                 Button("Reset Without Saving", role: .destructive) { reset() }
                     .frame(maxWidth: .infinity)
                 Button("Cancel") { dismiss() }

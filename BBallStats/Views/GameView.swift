@@ -14,7 +14,6 @@ struct GameView: View {
     @State private var showSeason = false
     @State private var showPaywall = false
     private let plus = PlusStore.shared
-    private let season = SeasonStore.shared
 
     // Shot buttons on the left (two per row), hustle stats on the right
     private let leftStats: [Stat] = [.madeTwo, .missedTwo, .madeThree, .missedThree,
@@ -28,8 +27,12 @@ struct GameView: View {
                 let textSize = min(screen.size.height / 26, screen.size.width / 12)
 
                 VStack(spacing: 8) {
+                    if plus.isPlus {
+                        PlayerSwitcher(fontSize: min(textSize * 0.7, 26))
+                            .padding(.top, 4)
+                    }
                     StatsView(fontSize: textSize)
-                        .padding(.top, 8)
+                        .padding(.top, plus.isPlus ? 0 : 8)
 
                     GeometryReader { area in
                         buttonGrid(in: area.size)
@@ -39,9 +42,6 @@ struct GameView: View {
                     controls(fontSize: min(textSize * 0.7, 28))
 
                     HStack(spacing: 16) {
-                        if plus.isPlus, let player = season.currentPlayer {
-                            Text("Tracking: \(player.name)")
-                        }
                         if WallaceAds.privacyOptionsRequired {
                             Button("Ad privacy settings") {
                                 WallaceAds.presentPrivacyOptions()

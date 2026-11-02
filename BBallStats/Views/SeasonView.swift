@@ -85,6 +85,7 @@ struct SeasonView: View {
 
 /// Shows the current player; switches players or opens player management.
 struct PlayerMenu: View {
+    @Environment(Game.self) private var game
     private let season = SeasonStore.shared
     @Binding var showPlayers: Bool
 
@@ -92,9 +93,9 @@ struct PlayerMenu: View {
         Menu {
             ForEach(season.players) { player in
                 Button {
-                    season.currentPlayerID = player.id
+                    season.switchTo(player.id, game: game)
                 } label: {
-                    if player.id == season.currentPlayerID { Label(player.name, systemImage: "checkmark") } else { Text(player.name) }
+                    PlayerMenuLabel(player: player)
                 }
             }
             Divider()
@@ -295,6 +296,7 @@ struct ShareCard: View {
 }
 
 struct PlayersView: View {
+    @Environment(Game.self) private var game
     private let season = SeasonStore.shared
     @Environment(\.dismiss) private var dismiss
     @State private var newName = ""
@@ -321,7 +323,7 @@ struct PlayersView: View {
                     Section {
                         ForEach(season.players) { player in
                             Button {
-                                season.currentPlayerID = player.id
+                                season.switchTo(player.id, game: game)
                             } label: {
                                 HStack {
                                     Text(player.name).foregroundStyle(.primary)
@@ -355,7 +357,7 @@ struct PlayersView: View {
             }
             .confirmationDialog("Delete \(deleting?.name ?? "")?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
                                 titleVisibility: .visible) {
-                Button("Delete player and their games", role: .destructive) { if let p = deleting { season.delete(p) } }
+                Button("Delete player and their games", role: .destructive) { if let p = deleting { season.delete(p, game: game) } }
             } message: {
                 Text("This removes \(deleting.map { season.games(for: $0.id).count } ?? 0) saved games.")
             }
@@ -366,7 +368,82 @@ struct PlayersView: View {
         let name = newName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
         let player = season.addPlayer(named: name)
-        season.currentPlayerID = player.id
+        season.switchTo(player.id, game: game)
         newName = ""
+    }
+}
+
+/// A player's name in a switch menu: checkmark for the player on screen, a dot for a paused game in progress.
+struct PlayerMenuLabel: View {
+    let player: Player
+    private let season = SeasonStore.shared
+
+    var body: some View {
+        if player.id == season.currentPlayerID {
+            Label(player.name, systemImage: "checkmark")
+        } else if season.hasLiveGame(player.id) {
+            Label("\(player.name) · game in progress", systemImage: "circle.fill")
+        } else {
+            Text(player.name)
+        }
+    }
+}
+
+/// Main-screen player control (BBaller+). With two or more players it is a row of name chips, so a parent
+/// or coach tracking a whole team switches in one tap; each player keeps their own game in progress.
+struct PlayerSwitcher: View {
+    @Environment(Game.self) private var game
+    private let season = SeasonStore.shared
+    @State private var showPlayers = false
+    let fontSize: CGFloat
+
+    var body: some View {
+        Group {
+            if season.players.count >= 2 {
+                chips
+            } else {
+                Button { showPlayers = true } label: {
+                    chip(season.currentPlayer?.name ?? "Add player", icon: "person.crop.circle.fill", selected: true)
+                }
+                .accessibilityLabel(season.currentPlayer.map { "Player: \($0.name). Add players" } ?? "Add a player")
+            }
+        }
+        .sheet(isPresented: $showPlayers) { PlayersView() }
+    }
+
+    private var chips: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(season.players) { player in
+                        let selected = player.id == season.currentPlayerID
+                        Button { season.switchTo(player.id, game: game) } label: {
+                            chip(player.name, icon: season.hasLiveGame(player.id) ? "circle.fill" : nil, selected: selected)
+                        }
+                        .id(player.id)
+                        .accessibilityLabel(player.name + (season.hasLiveGame(player.id) ? ", game in progress" : ""))
+                        .accessibilityAddTraits(selected ? .isSelected : [])
+                    }
+                    Button { showPlayers = true } label: { chip("", icon: "plus", selected: false) }
+                        .accessibilityLabel("Add or edit players")
+                }
+                .padding(.horizontal, 12)
+            }
+            .onAppear { proxy.scrollTo(season.currentPlayerID, anchor: .center) }
+        }
+    }
+
+    private func chip(_ title: String, icon: String?, selected: Bool) -> some View {
+        HStack(spacing: 5) {
+            if let icon {
+                Image(systemName: icon).font(.system(size: icon == "circle.fill" ? fontSize * 0.4 : fontSize * 0.85, weight: .bold))
+            }
+            if !title.isEmpty { Text(title).lineLimit(1) }
+        }
+        .font(.system(size: fontSize, weight: .bold))
+        .padding(.horizontal, 14)
+        .frame(minWidth: 44, minHeight: 40)
+        .background(Capsule().fill(selected ? Color.blue : Color.blue.opacity(0.12)))
+        .foregroundStyle(selected ? Color.white : Color.blue)
     }
 }
