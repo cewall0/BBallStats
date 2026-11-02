@@ -68,6 +68,8 @@ struct GameView: View {
             .navigationDestination(isPresented: $showSeason) { SeasonView() }
             .sheet(isPresented: $showPaywall) { NavigationStack { PlusPaywall() } }
         }
+        // On the stack itself so pushed screens (Season, game detail) can pop back here
+        .environment(\.returnToGame, ReturnToGame { showSeason = false })
     }
 
     /// 4 rows: two columns of shot buttons, a divider, and one column of hustle stats.
@@ -102,7 +104,7 @@ struct GameView: View {
         .accessibilityLabel(showFix ? "Undo \(stat.spokenName)" : stat.spokenName)
     }
 
-    /// Fix switches the buttons to undo; Reset ends the game; Season is BBaller+.
+    /// Fix switches the buttons to undo; End Game (New Game when free) finishes it; Season is BBaller+.
     private func controls(fontSize: CGFloat) -> some View {
         HStack(spacing: 20) {
             Toggle(isOn: $showFix) {
@@ -118,8 +120,8 @@ struct GameView: View {
             }
             .toggleStyle(.button)
 
-            NavigationLink(destination: ResetView().navigationBarBackButtonHidden(true)) {
-                Text("Reset")
+            NavigationLink(destination: EndGameView()) {
+                Text(plus.isPlus ? "End Game" : "New Game")
                     .font(.system(size: fontSize, weight: .bold))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
@@ -177,4 +179,14 @@ extension Color {
 #Preview {
     GameView()
         .environment(Game())
+}
+
+/// Pops back to the game screen, e.g. after resuming a saved game from Season.
+struct ReturnToGame {
+    var action: () -> Void = {}
+    func callAsFunction() { action() }
+}
+
+extension EnvironmentValues {
+    @Entry var returnToGame = ReturnToGame()
 }

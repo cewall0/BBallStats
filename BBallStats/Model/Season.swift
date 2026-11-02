@@ -73,11 +73,14 @@ final class SeasonStore {
     }
     /// Each player's game in progress while another player is on screen
     private var liveGames: [UUID: StatLine] = [:]
+    /// Player → saved game they resumed; ending that game updates it instead of adding a new one
+    private(set) var resumed: [UUID: UUID] = [:]
 
     private struct Saved: Codable {
         var players: [Player]
         var games: [GameRecord]
-        var liveGames: [UUID: StatLine]? = nil   // added in 1.5; older files don't have it
+        var liveGames: [UUID: StatLine]? = nil   // added in 1.5; older files don't have them
+        var resumed: [UUID: UUID]? = nil
     }
     private let url = URL.applicationSupportDirectory.appending(path: "season.json")
 
@@ -86,6 +89,7 @@ final class SeasonStore {
             players = saved.players
             games = saved.games
             liveGames = saved.liveGames ?? [:]
+            resumed = saved.resumed ?? [:]
         }
         #if DEBUG
         if CommandLine.arguments.contains("-seedDemoSeason") { seedDemo() }
@@ -133,12 +137,53 @@ final class SeasonStore {
         players.removeAll { $0.id == player.id }
         games.removeAll { $0.playerID == player.id }
         liveGames[player.id] = nil
+        resumed[player.id] = nil
         if currentPlayerID == player.id { currentPlayerID = nil }
         save()
     }
 
+    /// Ends a player's game: saves it to their season, or updates the saved game they resumed.
     func record(_ line: StatLine, opponent: String, for playerID: UUID) {
-        games.append(GameRecord(playerID: playerID, date: .now, opponent: opponent.trimmingCharacters(in: .whitespaces), line: line))
+        store(line, opponent: opponent, for: playerID, date: .now)
+        save()
+    }
+
+    private func store(_ line: StatLine, opponent: String, for playerID: UUID, date: Date) {
+        let opponent = opponent.trimmingCharacters(in: .whitespaces)
+        if let id = resumed.removeValue(forKey: playerID), let i = games.firstIndex(where: { $0.id == id }) {
+            games[i].line = line
+            games[i].opponent = opponent
+        } else {
+            games.append(GameRecord(playerID: playerID, date: date, opponent: opponent, line: line))
+        }
+    }
+
+    /// The saved game the player on screen resumed, if any
+    var resumedGame: GameRecord? {
+        currentPlayerID.flatMap { resumed[$0] }.flatMap { id in games.first { $0.id == id } }
+    }
+
+    /// Puts a saved game back on the main screen to keep tracking. A game the player
+    /// already had in progress is saved to their season first, so nothing is lost.
+    func resume(_ record: GameRecord, game: Game) {
+        if currentPlayerID != record.playerID { switchTo(record.playerID, game: game) }
+        if game.line != StatLine() { store(game.line, opponent: "", for: record.playerID, date: .now) }
+        game.line = record.line
+        resumed[record.playerID] = record.id
+        game.save()
+        save()
+    }
+
+    /// Saves corrections to a finished game.
+    func update(_ record: GameRecord) {
+        guard let i = games.firstIndex(where: { $0.id == record.id }) else { return }
+        games[i] = record
+        save()
+    }
+
+    /// Clears a player's game without saving it (a resumed game stays as it was saved).
+    func discardLiveGame(for playerID: UUID) {
+        resumed[playerID] = nil
         save()
     }
 
@@ -148,13 +193,12 @@ final class SeasonStore {
     /// End of a team game: saves the on-screen game and every paused one, then clears them all.
     func recordAll(onScreen line: StatLine, opponent: String) {
         let date = Date.now
-        let trimmed = opponent.trimmingCharacters(in: .whitespaces)
         if let current = currentPlayerID, line != StatLine() {
-            games.append(GameRecord(playerID: current, date: date, opponent: trimmed, line: line))
+            store(line, opponent: opponent, for: current, date: date)
         }
         for player in playersWithLiveGames {
             if let paused = liveGames[player.id] {
-                games.append(GameRecord(playerID: player.id, date: date, opponent: trimmed, line: paused))
+                store(paused, opponent: opponent, for: player.id, date: date)
             }
         }
         liveGames = [:]
@@ -168,12 +212,13 @@ final class SeasonStore {
 
     func delete(_ game: GameRecord) {
         games.removeAll { $0.id == game.id }
+        resumed = resumed.filter { $0.value != game.id }
         save()
     }
 
     private func save() {
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try? JSONEncoder().encode(Saved(players: players, games: games, liveGames: liveGames))
+        try? JSONEncoder().encode(Saved(players: players, games: games, liveGames: liveGames, resumed: resumed))
             .write(to: url, options: [.atomic, .completeFileProtection])
     }
 
