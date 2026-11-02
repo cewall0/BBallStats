@@ -24,8 +24,8 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/cewall0/WallaceAds.git",
       "state": {
-        "revision": "9b29629f11850eeb099424d0b7712b71d326bb57",
-        "version": "1.3.0"
+        "revision": "6640b61c27600b0a7226030493c64483e390539e",
+        "version": "1.3.2"
       }
     }
   ],
