@@ -21,7 +21,8 @@ struct BBallStatsApp: App {
         #endif
         WallaceAds.configure(.init(
             bannerID: "ca-app-pub-5511806561009019/3713108205",
-            useTestAds: useTestAds
+            useTestAds: useTestAds,
+            removeAdsProductID: "com.WallaceApps.FavBBaller.removeads"
         ))
     }
     

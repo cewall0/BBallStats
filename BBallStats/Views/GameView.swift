@@ -620,13 +620,16 @@ Spacer()
             } // end HStack
             .padding(.vertical, 10)
             
-            if WallaceAds.privacyOptionsRequired {
-                Button("Ad privacy settings") {
-                    WallaceAds.presentPrivacyOptions()
+            HStack(spacing: 16) {
+                if WallaceAds.privacyOptionsRequired {
+                    Button("Ad privacy settings") {
+                        WallaceAds.presentPrivacyOptions()
+                    }
                 }
-                .font(.footnote)
-                .foregroundColor(.gray)
+                RemoveAdsLink { Text("Remove ads") }
             }
+            .font(.footnote)
+            .foregroundColor(.gray)
 
             BannerAdView(size: .compact)
                 .padding(.bottom, 10)
