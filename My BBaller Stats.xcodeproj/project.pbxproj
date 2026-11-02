@@ -7,42 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B08EECB291AEEEB00E23F70 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B08EECA291AEEEB00E23F70 /* Assets.xcassets */; };
-		0B2A25042912E92D00091401 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A25032912E92D00091401 /* StatsView.swift */; };
-		0B5EF05B2932C32E004DF4D6 /* ButtonPressAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5EF05A2932C32E004DF4D6 /* ButtonPressAction.swift */; };
-		0B9FAE97290AF7B900E3046E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE96290AF7B900E3046E /* Game.swift */; };
-		0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9FAE9B290B3B4000E3046E /* ResetView.swift */; };
-		0BAB184729036BF4006F2607 /* My BBaller Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184629036BF4006F2607 /* My BBaller Stats.swift */; };
-		0BAB184929036BF4006F2607 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAB184829036BF4006F2607 /* GameView.swift */; };
-		0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */; };
-		0BD0C7D32D6831F2000C696E /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD0C7D22D6831F2000C696E /* SplashScreenView.swift */; };
 		3D992DA89BC77D316665AD30 /* WallaceAds in Frameworks */ = {isa = PBXBuildFile; productRef = 92BCEE417BC231B309776D08 /* WallaceAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0B08EECA291AEEEB00E23F70 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0B2A25032912E92D00091401 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
-		0B2FFE852D67D3AA00CE0DCB /* BBallerStatsInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BBallerStatsInfo.plist; sourceTree = "<group>"; };
-		0B5EF05A2932C32E004DF4D6 /* ButtonPressAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ButtonPressAction.swift; path = BBallStats/ButtonPressAction.swift; sourceTree = SOURCE_ROOT; };
-		0B9FAE96290AF7B900E3046E /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
-		0B9FAE9B290B3B4000E3046E /* ResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetView.swift; sourceTree = "<group>"; };
 		0BAB184329036BF4006F2607 /* My BBaller Stats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My BBaller Stats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0BAB184629036BF4006F2607 /* My BBaller Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My BBaller Stats.swift"; sourceTree = "<group>"; };
-		0BAB184829036BF4006F2607 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
-		0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		0BD0C7D22D6831F2000C696E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CA1E7B364CCFC38184030B0D /* Exceptions for "BBallStats" folder in "My BBaller Stats" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				BBallerStatsInfo.plist,
+			);
+			target = 0BAB184229036BF4006F2607 /* My BBaller Stats */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0B2FFE6D2D6781E500CE0DCB /* Ad */ = {
+		A5BA20383651B58D26ED8A76 /* BBallStats */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				CA1E7B364CCFC38184030B0D /* Exceptions for "BBallStats" folder in "My BBaller Stats" target */,
 			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Ad;
+			path = BBallStats;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -59,30 +47,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0B9FAE90290AE07900E3046E /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				0BAB184829036BF4006F2607 /* GameView.swift */,
-				0B9FAE9B290B3B4000E3046E /* ResetView.swift */,
-				0B2A25032912E92D00091401 /* StatsView.swift */,
-				0BD0C7D22D6831F2000C696E /* SplashScreenView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		0B9FAE95290AE26400E3046E /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				0B9FAE96290AF7B900E3046E /* Game.swift */,
-				0B5EF05A2932C32E004DF4D6 /* ButtonPressAction.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		0BAB183A29036BF4006F2607 = {
 			isa = PBXGroup;
 			children = (
-				0BAB184529036BF4006F2607 /* BBallStats */,
+				A5BA20383651B58D26ED8A76 /* BBallStats */,
 				0BAB184429036BF4006F2607 /* Products */,
 				137EC828F30CECD9FE3E734C /* Pods */,
 			);
@@ -94,28 +62,6 @@
 				0BAB184329036BF4006F2607 /* My BBaller Stats.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		0BAB184529036BF4006F2607 /* BBallStats */ = {
-			isa = PBXGroup;
-			children = (
-				0BAB184629036BF4006F2607 /* My BBaller Stats.swift */,
-				0B2FFE852D67D3AA00CE0DCB /* BBallerStatsInfo.plist */,
-				0B2FFE6D2D6781E500CE0DCB /* Ad */,
-				0B08EECA291AEEEB00E23F70 /* Assets.xcassets */,
-				0B9FAE90290AE07900E3046E /* Views */,
-				0B9FAE95290AE26400E3046E /* Model */,
-				0BAB184C29036BF6006F2607 /* Preview Content */,
-			);
-			path = BBallStats;
-			sourceTree = "<group>";
-		};
-		0BAB184C29036BF6006F2607 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				0BAB184D29036BF6006F2607 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		137EC828F30CECD9FE3E734C /* Pods */ = {
@@ -141,7 +87,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0B2FFE6D2D6781E500CE0DCB /* Ad */,
+				A5BA20383651B58D26ED8A76 /* BBallStats */,
 			);
 			name = "My BBaller Stats";
 			packageProductDependencies = (
@@ -192,8 +138,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B08EECB291AEEEB00E23F70 /* Assets.xcassets in Resources */,
-				0BAB184E29036BF6006F2607 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,13 +148,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B9FAE97290AF7B900E3046E /* Game.swift in Sources */,
-				0B5EF05B2932C32E004DF4D6 /* ButtonPressAction.swift in Sources */,
-				0BAB184929036BF4006F2607 /* GameView.swift in Sources */,
-				0B9FAE9C290B3B4000E3046E /* ResetView.swift in Sources */,
-				0BD0C7D32D6831F2000C696E /* SplashScreenView.swift in Sources */,
-				0BAB184729036BF4006F2607 /* My BBaller Stats.swift in Sources */,
-				0B2A25042912E92D00091401 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

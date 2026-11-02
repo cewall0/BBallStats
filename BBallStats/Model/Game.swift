@@ -8,195 +8,156 @@
 import SwiftUI
 import Observation
 
-@Observable
-final class Game: Codable {
-    // All of these properties can change. We want them available to other views.
-    var totalPoints = 0
-    var twoPointersMade = 0
-    var twoPointersAttempted = 0
-    var threePointersMade = 0
-    var threePointersAttempted = 0
-    var rebounds = 0
-    var assists = 0
-    var steals = 0
-    var blocks = 0
-    var turnovers = 0
-    var freeThrowsMade = 0
-    var freeThrowsAttempted = 0
-    var fouls = 0
+/// Everything a button can record. The order is the order of the buttons.
+enum Stat: CaseIterable, Identifiable {
+    case madeTwo, missedTwo, madeThree, missedThree, madeFreeThrow, missedFreeThrow, turnover, foul
+    case rebound, assist, steal, block
 
-    // MARK: - Saving stats between launches
+    var id: Self { self }
 
-    // The underscored names are the @Observable backing storage.
-    enum CodingKeys: String, CodingKey {
-        case _totalPoints = "totalPoints"
-        case _twoPointersMade = "twoPointersMade"
-        case _twoPointersAttempted = "twoPointersAttempted"
-        case _threePointersMade = "threePointersMade"
-        case _threePointersAttempted = "threePointersAttempted"
-        case _rebounds = "rebounds"
-        case _assists = "assists"
-        case _steals = "steals"
-        case _blocks = "blocks"
-        case _turnovers = "turnovers"
-        case _freeThrowsMade = "freeThrowsMade"
-        case _freeThrowsAttempted = "freeThrowsAttempted"
-        case _fouls = "fouls"
+    /// Good plays are green, misses and mistakes are red
+    var isPositive: Bool {
+        switch self {
+        case .missedTwo, .missedThree, .missedFreeThrow, .turnover, .foul: return false
+        default: return true
+        }
     }
+
+    var buttonTitle: String {
+        switch self {
+        case .madeTwo: return "Made\n2 pt"
+        case .missedTwo: return "Missed\n2 pt"
+        case .madeThree: return "Made\n3 pt"
+        case .missedThree: return "Missed\n3 pt"
+        case .madeFreeThrow: return "Made\nFree\nThrow"
+        case .missedFreeThrow: return "Missed\nFree\nThrow"
+        case .turnover: return "Turn\nOver"
+        case .foul: return "Foul"
+        case .rebound: return "Reb"
+        case .assist: return "Assist"
+        case .steal: return "Steal"
+        case .block: return "Block"
+        }
+    }
+
+    var undoTitle: String {
+        switch self {
+        case .madeTwo: return "Undo\nMade 2"
+        case .missedTwo: return "Undo\nMissed\n2"
+        case .madeThree: return "Undo\nMade 3"
+        case .missedThree: return "Undo\nMissed\n3"
+        case .madeFreeThrow: return "Undo\nMade\nFT"
+        case .missedFreeThrow: return "Undo\nMissed\nFT"
+        case .turnover: return "Undo\nTO"
+        case .foul: return "Undo\nFoul"
+        case .rebound: return "Undo\nReb"
+        case .assist: return "Undo\nAssist"
+        case .steal: return "Undo\nSteal"
+        case .block: return "Undo\nBlock"
+        }
+    }
+
+    /// What VoiceOver reads
+    var spokenName: String {
+        switch self {
+        case .madeTwo: return "Made 2 pointer"
+        case .missedTwo: return "Missed 2 pointer"
+        case .madeThree: return "Made 3 pointer"
+        case .missedThree: return "Missed 3 pointer"
+        case .madeFreeThrow: return "Made free throw"
+        case .missedFreeThrow: return "Missed free throw"
+        case .turnover: return "Turnover"
+        case .foul: return "Foul"
+        case .rebound: return "Rebound"
+        case .assist: return "Assist"
+        case .steal: return "Steal"
+        case .block: return "Block"
+        }
+    }
+}
+
+/// One game's box score. The coding keys are the names earlier versions saved,
+/// so a game in progress survives the update.
+struct StatLine: Codable, Hashable {
+    var points = 0
+    var twoMade = 0, twoAttempted = 0
+    var threeMade = 0, threeAttempted = 0
+    var ftMade = 0, ftAttempted = 0
+    var rebounds = 0, assists = 0, steals = 0, blocks = 0, turnovers = 0, fouls = 0
+
+    static let maxFouls = 5
+
+    enum CodingKeys: String, CodingKey {
+        case points = "totalPoints"
+        case twoMade = "twoPointersMade", twoAttempted = "twoPointersAttempted"
+        case threeMade = "threePointersMade", threeAttempted = "threePointersAttempted"
+        case ftMade = "freeThrowsMade", ftAttempted = "freeThrowsAttempted"
+        case rebounds, assists, steals, blocks, turnovers, fouls
+    }
+
+    mutating func record(_ stat: Stat) {
+        switch stat {
+        case .madeTwo: twoMade += 1; twoAttempted += 1; points += 2
+        case .missedTwo: twoAttempted += 1
+        case .madeThree: threeMade += 1; threeAttempted += 1; points += 3
+        case .missedThree: threeAttempted += 1
+        case .madeFreeThrow: ftMade += 1; ftAttempted += 1; points += 1
+        case .missedFreeThrow: ftAttempted += 1
+        case .turnover: turnovers += 1
+        case .foul: if fouls < Self.maxFouls { fouls += 1 }  // fouled out
+        case .rebound: rebounds += 1
+        case .assist: assists += 1
+        case .steal: steals += 1
+        case .block: blocks += 1
+        }
+    }
+
+    /// Takes back one of `stat`, never going below zero (and a miss can't remove a make).
+    mutating func undo(_ stat: Stat) {
+        switch stat {
+        case .madeTwo: if twoMade > 0 { twoMade -= 1; twoAttempted -= 1; points -= 2 }
+        case .missedTwo: if twoAttempted > twoMade { twoAttempted -= 1 }
+        case .madeThree: if threeMade > 0 { threeMade -= 1; threeAttempted -= 1; points -= 3 }
+        case .missedThree: if threeAttempted > threeMade { threeAttempted -= 1 }
+        case .madeFreeThrow: if ftMade > 0 { ftMade -= 1; ftAttempted -= 1; points -= 1 }
+        case .missedFreeThrow: if ftAttempted > ftMade { ftAttempted -= 1 }
+        case .turnover: turnovers = max(0, turnovers - 1)
+        case .foul: fouls = max(0, fouls - 1)
+        case .rebound: rebounds = max(0, rebounds - 1)
+        case .assist: assists = max(0, assists - 1)
+        case .steal: steals = max(0, steals - 1)
+        case .block: blocks = max(0, blocks - 1)
+        }
+    }
+}
+
+@Observable
+final class Game {
+    var line = StatLine()
 
     static let savedStatsKey = "savedStats"
 
     /// The stats from when the app last closed, or a fresh game.
     static func loadSaved() -> Game {
-        guard let data = UserDefaults.standard.data(forKey: savedStatsKey),
-              let game = try? JSONDecoder().decode(Game.self, from: data) else { return Game() }
+        let game = Game()
+        if let data = UserDefaults.standard.data(forKey: savedStatsKey),
+           let line = try? JSONDecoder().decode(StatLine.self, from: data) {
+            game.line = line
+        }
         return game
     }
 
     func save() {
-        if let data = try? JSONEncoder().encode(self) {
+        if let data = try? JSONEncoder().encode(line) {
             UserDefaults.standard.set(data, forKey: Game.savedStatsKey)
         }
     }
 
-    init() {}
+    func record(_ stat: Stat) { line.record(stat) }
+    func undo(_ stat: Stat) { line.undo(stat) }
 
-    func makeTwo(){
-        twoPointersMade += 1
-        twoPointersAttempted += 1
-        totalPoints += 2
-        }
-
-   func missTwo(){
-        twoPointersAttempted = twoPointersAttempted + 1
+    func reset() {
+        line = StatLine()
+        save()
     }
-
-    func removeMakeTwo(){
-        if twoPointersMade != 0 {
-            twoPointersMade = twoPointersMade - 1
-            twoPointersAttempted = twoPointersAttempted - 1
-            totalPoints = totalPoints - 2
-        }
-    }
-
-    func removeMissTwo(){
-        if twoPointersAttempted != 0 && twoPointersAttempted > twoPointersMade {
-            twoPointersAttempted = twoPointersAttempted - 1
-        }
-    }
-
-    func makeThree(){
-        threePointersMade = threePointersMade + 1
-        threePointersAttempted = threePointersAttempted + 1
-        totalPoints = totalPoints + 3
-    }
-
-    func missThree(){
-        threePointersAttempted = threePointersAttempted + 1
-    }
-
-    func removeMakeThree(){
-        if threePointersMade != 0 {
-            threePointersMade = threePointersMade - 1
-            threePointersAttempted = threePointersAttempted - 1
-            totalPoints = totalPoints - 3
-        }
-    }
-
-    func removeMissThree(){
-        if threePointersAttempted != 0 && threePointersAttempted > threePointersMade {
-            threePointersAttempted = threePointersAttempted - 1
-        }
-    }
-
-    func makeFT(){
-        freeThrowsMade = freeThrowsMade + 1
-        freeThrowsAttempted = freeThrowsAttempted + 1
-        totalPoints = totalPoints + 1
-    }
-
-    func missFT(){
-        freeThrowsAttempted = freeThrowsAttempted + 1
-    }
-
-    func removeMakeFT(){
-        if freeThrowsMade != 0 {
-            freeThrowsMade = freeThrowsMade - 1
-            freeThrowsAttempted = freeThrowsAttempted - 1
-            totalPoints = totalPoints - 1
-        }
-    }
-
-    func removeMissFT(){
-        if freeThrowsAttempted != 0 && freeThrowsAttempted > freeThrowsMade {
-            freeThrowsAttempted = freeThrowsAttempted - 1
-        }
-    }
-
-    func rebound(){
-        rebounds = rebounds + 1
-    }
-
-    func removeRebound(){
-        if rebounds != 0 {
-            rebounds = rebounds - 1
-        }
-    }
-
-    func assist(){
-        assists = assists + 1
-    }
-
-    func steal(){
-        steals = steals + 1
-    }
-    
-    func block(){
-        blocks = blocks + 1
-    }
-    
-    func foul(){
-        if fouls < 5 {
-            fouls = fouls + 1
-        }
-    }
-
-    
-    func removeAssist(){
-        if assists != 0 {
-            assists = assists - 1
-        }
-    }
-    
-    func removeSteal(){
-        if steals != 0 {
-            steals = steals - 1
-        }
-    }
-    
-    func removeFoul(){
-        if fouls != 0 {
-            fouls = fouls - 1
-        }
-    }
-    
-    func removeBlock(){
-        if blocks != 0 {
-            blocks = blocks - 1
-        }
-    }
-
-    func turnover(){
-        turnovers = turnovers + 1
-    }
-
-    func removeTurnover(){
-        if turnovers != 0 {
-            turnovers = turnovers - 1
-        }
-    }
-
-   
-    
-} // end struct Game
-
+}

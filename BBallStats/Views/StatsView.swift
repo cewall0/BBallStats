@@ -7,67 +7,32 @@
 
 import SwiftUI
 
+/// The box score above the buttons.
 struct StatsView: View {
     @Environment(Game.self) private var game
-    @State private var made2IsPressed = false
-    
-    var deviceHeight: CGFloat {
-        UIScreen.main.bounds.height
-    }
-
+    let fontSize: CGFloat
 
     var body: some View {
-        Text("          ")
-        HStack{
-            Text("\(game.totalPoints) (tot pts)")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.twoPointersMade)-\(game.twoPointersAttempted) (2-pt)")
-        } // end HStack
-        .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-        .scaleEffect(made2IsPressed ? 1.2 : 1.0)
-        .opacity(made2IsPressed ? 0.6 : 1.0).pressEvents {
-            // On press
-            withAnimation(.easeInOut(duration: 0.1)) {
-                made2IsPressed = true
-            }
-        } onRelease: {
-            withAnimation {
-                made2IsPressed = false
-            }
+        let s = game.line
+        VStack(spacing: 2) {
+            line("\(s.points) (tot pts)", "\(s.twoMade)-\(s.twoAttempted) (2-pt)")
+            line("\(s.threeMade)-\(s.threeAttempted) (3-pt)", "\(s.ftMade)-\(s.ftAttempted) (FT)")
+            line("\(s.rebounds) Reb", "\(s.assists) Asst", "\(s.steals) Stls")
+            line("\(s.turnovers) TO", "\(s.blocks) Blks", "\(s.fouls) Fls")
         }
-        
-        HStack{
-            Text("\(game.threePointersMade)-\(game.threePointersAttempted) (3-pt)")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.freeThrowsMade)-\(game.freeThrowsAttempted) (FT)")
-        } // end HStack
-        .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-        
-        HStack{
-            Text("\(game.rebounds) Reb")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.assists) Asst")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.steals) Stls")
-//            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-        }
-        .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-        
-        HStack{
-            Text("\(game.turnovers) TO")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.blocks) Blks")
-            Text("|").foregroundColor(Color(UIColor(red:0/255, green: 0/255, blue: 205/255, alpha: 1.0)))
-            Text("\(game.fouls) Fls")
-        }
-        .font(.system(size: deviceHeight/770 * 30, weight: .bold))
-
-        } // end VStack for bottom Fix and stat lines
+        .font(.system(size: fontSize, weight: .bold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
     }
 
-
-//struct StatsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StatsView()
-//    }
-//}
+    /// Items separated by blue bars
+    private func line(_ items: String...) -> some View {
+        HStack {
+            ForEach(Array(items.enumerated()), id: \.offset) { i, item in
+                if i > 0 { Text("|").foregroundColor(.statDivider) }
+                Text(item)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}

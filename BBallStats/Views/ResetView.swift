@@ -5,81 +5,49 @@
 //  Created by Chad Wallace on 10/27/22.
 //
 
-import Foundation
 import SwiftUI
-import Observation
 import StoreKit
 
 struct ResetView: View {
-    
-    // Let's always listen to the GameViewModel for changes to make to this GameView
     @Environment(Game.self) private var game
     @Environment(\.dismiss) private var dismiss
     @Environment(\.requestReview) private var requestReview
     @AppStorage("completedGames") private var completedGames = 0
-    
-    var deviceHeight: CGFloat {
-        UIScreen.main.bounds.height
-    }
-    
+
     var body: some View {
+        GeometryReader { screen in
+            let fontSize = min(screen.size.height / 19, screen.size.width / 8)
+            VStack {
+                Text("Are you sure you want to reset the stats?")
+                    .padding()
+                    .padding(.bottom, fontSize)
 
-            
-            VStack{
-                VStack{
-                    Text("Are you sure you want to reset the stats?")
-                    Text("             ")
+                HStack {
+                    Button("Yes") { reset() }
+                        .padding(30)
+                    Button("No") { dismiss() }
+                        .padding(30)
                 }
-                .font(.system(size: deviceHeight/770 * 40, weight: .bold))
-                .padding()
-                
-                HStack{
-                    
-                    Button("Yes"){
-                            //Then, reset all of the stats
-                            game.totalPoints = 0
-                            game.twoPointersMade = 0
-                            game.twoPointersAttempted = 0
-                            game.threePointersMade = 0
-                            game.threePointersAttempted = 0
-                            game.rebounds = 0
-                            game.assists = 0
-                            game.steals = 0
-                            game.blocks = 0
-                            game.turnovers = 0
-                            game.freeThrowsMade = 0
-                            game.freeThrowsAttempted = 0
-                            game.fouls = 0
-                            game.save()
-                            // A reset ends a game: ask for a rating after the 3rd, then every 10th (iOS limits how often it shows).
-                            // No interstitial here: a reset usually happens right before the next game starts.
-                            completedGames += 1
-                            if completedGames == 3 || completedGames % 10 == 0 {
-                                requestReview()
-                            }
-                            //Navigate
-                            dismiss()
-                        }
-                     .font(.system(size: deviceHeight/770 * 40, weight: .bold))
-                        .padding(30)
-
-                    
-                    Button("No") {
-                        // Do nothing
-                        dismiss()
-                    }
-                    .font(.system(size: deviceHeight/770 * 40, weight: .bold))
-                        .padding(30)
-
-                    
-                } // end HStack
-            } // end VStack
-            .navigationTitle("")
+            }
+            .font(.system(size: fontSize, weight: .bold))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .navigationTitle("")
     }
 
-struct ResetView_Previews: PreviewProvider {
-    static var previews: some View {
-        ResetView()
+    private func reset() {
+        game.reset()
+        // A reset ends a game: ask for a rating after the 3rd, then every 10th (iOS limits how often it shows).
+        // No interstitial here: a reset usually happens right before the next game starts.
+        completedGames += 1
+        if completedGames == 3 || completedGames % 10 == 0 {
+            requestReview()
+        }
+        dismiss()
     }
+}
+
+#Preview {
+    ResetView()
+        .environment(Game())
 }
