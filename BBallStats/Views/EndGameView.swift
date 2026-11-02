@@ -21,6 +21,7 @@ struct EndGameView: View {
     @State private var newPlayerName = ""
     @State private var showPaywall = false
     @State private var confirmDiscard = false
+    @State private var chosen: Set<UUID> = []
 
     var body: some View {
         Group {
@@ -32,76 +33,114 @@ struct EndGameView: View {
         .onAppear { opponent = season.resumedGame?.opponent ?? "" }
     }
 
-    // MARK: BBaller+: save to the season (the main action), or discard on purpose
+    // MARK: BBaller+: end the game for everyone in it
+
+    /// Everyone with stats in this game: the player on screen plus any paused games
+    private var playersInGame: [Player] {
+        season.players.filter { $0.id == season.currentPlayerID || season.hasLiveGame($0.id) }
+    }
+
+    private func line(for player: Player) -> StatLine {
+        player.id == season.currentPlayerID ? game.line : (season.liveGame(for: player.id) ?? StatLine())
+    }
+
+    private var chosenNames: String {
+        playersInGame.filter { chosen.contains($0.id) }.map(\.name).formatted(.list(type: .and))
+    }
 
     private var endGame: some View {
         Form {
-            Section {
-                Text(game.line.summary).font(.title2.bold())
-                Text(game.line.shooting).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
-            } header: {
-                Text(season.currentPlayer.map { "\($0.name)'s game" } ?? "This game")
-            } footer: {
-                if let resumed = season.resumedGame {
-                    Text("Saving updates your game from \(resumed.date.formatted(date: .abbreviated, time: .omitted)).")
+            if season.players.isEmpty {
+                Section {
+                    Text(game.line.summary).font(.title2.bold())
+                    TextField("Player name", text: $newPlayerName)
+                        .textContentType(.givenName)
+                } header: {
+                    Text("This game")
+                }
+            } else {
+                Section {
+                    ForEach(playersInGame) { player in
+                        Button {
+                            if chosen.contains(player.id) { chosen.remove(player.id) } else { chosen.insert(player.id) }
+                        } label: {
+                            HStack {
+                                Image(systemName: chosen.contains(player.id) ? "checkmark.circle.fill" : "circle")
+                                    .font(.title2)
+                                    .foregroundStyle(chosen.contains(player.id) ? Color.accentColor : Color.secondary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(player.name).font(.headline)
+                                    Text(line(for: player).summary).font(.subheadline)
+                                    Text(line(for: player).shooting).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                        }
+                        .tint(.primary)
+                        .accessibilityAddTraits(chosen.contains(player.id) ? .isSelected : [])
+                    }
+                } header: {
+                    Text(playersInGame.count > 1 ? "Players in this game" : "This game")
+                } footer: {
+                    if playersInGame.count > 1 {
+                        Text("Ticked players are saved together. Untick anyone whose game should stay in progress.")
+                    } else if let resumed = season.resumedGame {
+                        Text("Saving updates your game from \(resumed.date.formatted(date: .abbreviated, time: .omitted)).")
+                    }
                 }
             }
 
-            Section("Save to season") {
-                if season.players.isEmpty {
-                    TextField("Player name", text: $newPlayerName)
-                        .textContentType(.givenName)
-                }
+            Section("Opponent") {
                 TextField("Opponent (optional)", text: $opponent)
             }
 
             Section {
                 Button {
-                    let playerID = season.currentPlayerID ?? season.addPlayer(named: newPlayerName).id
-                    season.record(game.line, opponent: opponent, for: playerID)
-                    startNewGame()
+                    save()
                 } label: {
                     Label("Save & Start New Game", systemImage: "tray.and.arrow.down.fill")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                 }
-                .disabled(season.players.isEmpty && newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
-
-                if !season.playersWithLiveGames.isEmpty {
-                    Button {
-                        season.recordAll(onScreen: game.line, opponent: opponent)
-                        startNewGame()
-                    } label: {
-                        VStack {
-                            Text("Save All Players & Start New Game").font(.headline)
-                            Text("Also saves " + season.playersWithLiveGames.map(\.name).formatted(.list(type: .and)))
-                                .font(.caption).foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
+                .disabled(season.players.isEmpty ? newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty : chosen.isEmpty)
 
                 Button("Keep Playing") { dismiss() }
                     .frame(maxWidth: .infinity)
             } footer: {
-                Text("Your game in progress is saved on this phone automatically, so you can leave and come back any time. You can resume or edit a saved game later from Season.")
+                Text("Games in progress are saved on this phone automatically, so you can leave and come back any time. You can resume or edit a saved game later from Season.")
             }
 
-            Section {
-                Button("Discard This Game", role: .destructive) { confirmDiscard = true }
-                    .frame(maxWidth: .infinity)
+            if !season.players.isEmpty {
+                Section {
+                    Button("Discard This Game", role: .destructive) { confirmDiscard = true }
+                        .frame(maxWidth: .infinity)
+                        .disabled(chosen.isEmpty)
+                }
             }
         }
-        .confirmationDialog("Discard this game?", isPresented: $confirmDiscard, titleVisibility: .visible) {
-            Button("Discard Game", role: .destructive) {
-                if let id = season.currentPlayerID { season.discardLiveGame(for: id) }
-                startNewGame(finished: false)
+        .onAppear { chosen = Set(playersInGame.map(\.id)) }
+        .confirmationDialog("Discard \(chosenNames)'s game?", isPresented: $confirmDiscard, titleVisibility: .visible) {
+            Button("Discard", role: .destructive) {
+                let onScreen = season.currentPlayerID.map { chosen.contains($0) } ?? false
+                season.discardGames(chosen)
+                if onScreen { startNewGame(finished: false) } else { dismiss() }
             }
         } message: {
-            Text(season.resumedGame == nil
-                 ? "The stats on screen will be cleared and not saved."
-                 : "Changes since you resumed will be lost. The saved game stays as it was.")
+            Text("Their stats will be cleared and not saved. A resumed game stays as it was saved.")
         }
+    }
+
+    private func save() {
+        if season.players.isEmpty {
+            let player = season.addPlayer(named: newPlayerName)
+            season.endGame(saving: [player.id], onScreen: game.line, opponent: opponent)
+            startNewGame()
+            return
+        }
+        let onScreen = season.currentPlayerID.map { chosen.contains($0) } ?? false
+        season.endGame(saving: chosen, onScreen: game.line, opponent: opponent)
+        // The board clears when the player on screen was saved; otherwise their game carries on
+        if onScreen { startNewGame() } else { completedGames += 1; dismiss() }
     }
 
     // MARK: Free: clear the stats, with a nudge to keep the game

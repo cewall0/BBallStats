@@ -181,27 +181,30 @@ final class SeasonStore {
         save()
     }
 
-    /// Clears a player's game without saving it (a resumed game stays as it was saved).
-    func discardLiveGame(for playerID: UUID) {
-        resumed[playerID] = nil
-        save()
-    }
-
     /// Players other than the one on screen who have a game in progress
     var playersWithLiveGames: [Player] { players.filter { hasLiveGame($0.id) } }
 
-    /// End of a team game: saves the on-screen game and every paused one, then clears them all.
-    func recordAll(onScreen line: StatLine, opponent: String) {
+    /// A paused player's game in progress (the on-screen player's is the Game itself)
+    func liveGame(for playerID: UUID) -> StatLine? { liveGames[playerID] }
+
+    /// Ends the game for the chosen players: saves each one's stats (updating a resumed game)
+    /// and clears their game in progress. Players not chosen keep theirs.
+    func endGame(saving ids: Set<UUID>, onScreen line: StatLine, opponent: String) {
         let date = Date.now
-        if let current = currentPlayerID, line != StatLine() {
-            store(line, opponent: opponent, for: current, date: date)
+        for id in ids {
+            let stats = id == currentPlayerID ? line : liveGames[id]
+            if let stats { store(stats, opponent: opponent, for: id, date: date) }
+            liveGames[id] = nil
         }
-        for player in playersWithLiveGames {
-            if let paused = liveGames[player.id] {
-                store(paused, opponent: opponent, for: player.id, date: date)
-            }
+        save()
+    }
+
+    /// Throws away the chosen players' games in progress (resumed games stay as they were saved).
+    func discardGames(_ ids: Set<UUID>) {
+        for id in ids {
+            liveGames[id] = nil
+            resumed[id] = nil
         }
-        liveGames = [:]
         save()
     }
 
