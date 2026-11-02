@@ -11,6 +11,10 @@ import WallaceAds
 struct GameView: View {
     @Environment(Game.self) private var game
     @State private var showFix = false
+    @State private var showSeason = false
+    @State private var showPaywall = false
+    private let plus = PlusStore.shared
+    private let season = SeasonStore.shared
 
     // Shot buttons on the left (two per row), hustle stats on the right
     private let leftStats: [Stat] = [.madeTwo, .missedTwo, .madeThree, .missedThree,
@@ -32,21 +36,25 @@ struct GameView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
 
-                    controls(fontSize: min(textSize * 0.83, 32))
+                    controls(fontSize: min(textSize * 0.7, 28))
 
                     HStack(spacing: 16) {
+                        if plus.isPlus, let player = season.currentPlayer {
+                            Text("Tracking: \(player.name)")
+                        }
                         if WallaceAds.privacyOptionsRequired {
                             Button("Ad privacy settings") {
                                 WallaceAds.presentPrivacyOptions()
                             }
                         }
-                        RemoveAdsLink { Text("Remove ads") }
                     }
                     .font(.footnote)
                     .foregroundColor(.gray)
 
-                    BannerAdView(size: .compact)
-                        .padding(.bottom, 10)
+                    if !plus.isPlus {
+                        BannerAdView(size: .compact)
+                    }
+                    Color.clear.frame(height: 10)
                 }
             }
             .background(Color.white)
@@ -57,6 +65,8 @@ struct GameView: View {
                 }
             }
             .navigationTitle("")
+            .navigationDestination(isPresented: $showSeason) { SeasonView() }
+            .sheet(isPresented: $showPaywall) { NavigationStack { PlusPaywall() } }
         }
     }
 
@@ -92,7 +102,7 @@ struct GameView: View {
         .accessibilityLabel(showFix ? "Undo \(stat.spokenName)" : stat.spokenName)
     }
 
-    /// Fix switches the buttons to undo; Reset ends the game.
+    /// Fix switches the buttons to undo; Reset ends the game; Season is BBaller+.
     private func controls(fontSize: CGFloat) -> some View {
         HStack(spacing: 20) {
             Toggle(isOn: $showFix) {
@@ -119,6 +129,20 @@ struct GameView: View {
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(Color.red.opacity(0.8), lineWidth: 2))
             }
+
+            Button {
+                if plus.isPlus { showSeason = true } else { showPaywall = true }
+            } label: {
+                Text("Season")
+                    .font(.system(size: fontSize, weight: .bold))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
+                    .frame(width: 100, height: 40)
+                    .foregroundColor(.white)
+                    .background(Color.seasonOrange)
+                    .clipShape(Capsule())
+            }
+            .accessibilityHint(plus.isPlus ? "Season averages and saved games" : "BBaller+ subscription")
         }
     }
 }
@@ -147,6 +171,7 @@ extension Color {
     static let statGreen = Color(red: 0, green: 100 / 255, blue: 0)
     static let statRed = Color(red: 178 / 255, green: 34 / 255, blue: 34 / 255)
     static let statDivider = Color(red: 0, green: 0, blue: 205 / 255)
+    static let seasonOrange = Color(red: 0.75, green: 0.33, blue: 0)
 }
 
 #Preview {
