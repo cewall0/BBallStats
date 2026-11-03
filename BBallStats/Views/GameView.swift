@@ -106,26 +106,32 @@ struct GameView: View {
 
     /// Fix switches the buttons to undo; End Game (New Game when free) finishes it; Season is BBaller+.
     private func controls(fontSize: CGFloat) -> some View {
-        HStack(spacing: 20) {
-            Toggle(isOn: $showFix) {
+        HStack(spacing: 10) {
+            // A plain button (not a toggle-style Toggle, which adds its own padding) so all three capsules match
+            Button { showFix.toggle() } label: {
                 Text("Fix")
                     .font(.system(size: fontSize, weight: .bold))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .frame(width: 100, height: 40)
+                    .padding(.horizontal, 12)
+                    .frame(width: 114, height: 40)
                     .foregroundColor(.white)
                     .background(showFix ? Color.blue : Color.gray)
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(Color.blue, lineWidth: 2))
             }
-            .toggleStyle(.button)
+            .accessibilityLabel("Fix")
+            .accessibilityValue(showFix ? "On" : "Off")
+            .accessibilityHint("Switches the stat buttons to undo")
+            .accessibilityAddTraits(showFix ? .isSelected : [])
 
             NavigationLink(destination: EndGameView()) {
                 Text(plus.isPlus ? "End Game" : "New Game")
                     .font(.system(size: fontSize, weight: .bold))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .frame(width: 100, height: 40)
+                    .padding(.horizontal, 12)
+                    .frame(width: 114, height: 40)
                     .foregroundColor(.white)
                     .background(Color.red)
                     .clipShape(Capsule())
@@ -139,7 +145,8 @@ struct GameView: View {
                     .font(.system(size: fontSize, weight: .bold))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .frame(width: 100, height: 40)
+                    .padding(.horizontal, 12)
+                    .frame(width: 114, height: 40)
                     .foregroundColor(.white)
                     .background(Color.seasonOrange)
                     .clipShape(Capsule())

@@ -148,7 +148,7 @@ struct SeasonView: View {
             Section("Games") {
                 ForEach(games) { record in
                     NavigationLink {
-                        GamePager(games: games, startID: record.id)
+                        GamePager(playerID: record.playerID, startID: record.id)
                     } label: {
                         GameRow(game: record)
                     }
@@ -201,6 +201,12 @@ struct SeasonView: View {
 struct TeamGameView: View {
     let teamGame: TeamGame
     private let season = SeasonStore.shared
+    @Environment(\.dismiss) private var dismiss
+    @State private var confirmDelete = false
+
+    private var names: String {
+        teamGame.records.map { season.name(of: $0.playerID) }.formatted(.list(type: .and))
+    }
 
     var body: some View {
         List {
@@ -247,7 +253,7 @@ struct TeamGameView: View {
             Section {
                 ForEach(teamGame.records) { r in
                     NavigationLink {
-                        GamePager(games: season.games(for: r.playerID), startID: r.id)
+                        GamePager(playerID: r.playerID, startID: r.id)
                     } label: {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(season.name(of: r.playerID)).font(.headline)
@@ -260,24 +266,49 @@ struct TeamGameView: View {
             } footer: {
                 Text("Tap a player for their full box score, share card, edit and resume.")
             }
+
+            Section {
+                Button(teamGame.records.count > 1 ? "Delete Game for All Players" : "Delete Game", role: .destructive) {
+                    confirmDelete = true
+                }
+                .frame(maxWidth: .infinity)
+            }
         }
         .navigationTitle(teamGame.opponent.isEmpty ? "Game" : "vs \(teamGame.opponent)")
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog("Delete this game?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                teamGame.records.forEach(season.delete)
+                dismiss()
+            }
+        } message: {
+            Text("Removes this game from \(names)'s season. This can't be undone.")
+        }
     }
 }
 
 /// A player's games, one per page: swipe left and right between them.
 struct GamePager: View {
-    let games: [GameRecord]   // newest first
+    let playerID: UUID
     @State private var selection: UUID
+    @Environment(\.dismiss) private var dismiss
     private let season = SeasonStore.shared
 
-    init(games: [GameRecord], startID: UUID) {
-        self.games = games
+    init(playerID: UUID, startID: UUID) {
+        self.playerID = playerID
         _selection = State(initialValue: startID)
     }
 
+    private var games: [GameRecord] { season.games(for: playerID) }   // newest first
+
     private var index: Int { games.firstIndex { $0.id == selection } ?? 0 }
+
+    /// After a delete, show the next older game (or the newer one), or go back if none are left.
+    private func deleted(_ record: GameRecord) {
+        let remaining = games
+        if remaining.isEmpty { dismiss(); return }
+        selection = (remaining.first { $0.date < record.date } ?? remaining.last!).id
+    }
     private var current: GameRecord? {
         season.games.first { $0.id == selection } ?? games.first { $0.id == selection }
     }
@@ -285,11 +316,12 @@ struct GamePager: View {
     var body: some View {
         TabView(selection: $selection) {
             ForEach(games) { record in
-                GameDetailView(record: record, playerName: season.name(of: record.playerID))
+                GameDetailView(record: record, playerName: season.name(of: record.playerID)) { deleted(record) }
                     .tag(record.id)
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .onAppear { if games.isEmpty { dismiss() } }
         .background(Color(.systemGroupedBackground))
         .navigationTitle(current.map { $0.opponent.isEmpty ? "Game" : "vs \($0.opponent)" } ?? "Game")
         .navigationBarTitleDisplayMode(.inline)
@@ -407,11 +439,13 @@ private struct GameRow: View {
 struct GameDetailView: View {
     let record: GameRecord
     let playerName: String
+    var onDelete: () -> Void = {}
     @Environment(Game.self) private var game
     @Environment(\.returnToGame) private var returnToGame
     private let season = SeasonStore.shared
     @State private var editing = false
     @State private var confirmResume = false
+    @State private var confirmDelete = false
 
     /// The saved version, so edits show immediately
     private var current: GameRecord { season.games.first { $0.id == record.id } ?? record }
@@ -440,6 +474,10 @@ struct GameDetailView: View {
             } footer: {
                 Text("Resume puts this game back on the main screen to keep tracking; ending it again updates this game. Edit fixes any stat, the opponent or the date.")
             }
+            Section {
+                Button("Delete Game", role: .destructive) { confirmDelete = true }
+                    .frame(maxWidth: .infinity)
+            }
             Section("Box score") {
                 row("Points", "\(g.line.points)")
                 row("2-pointers", "\(g.line.twoMade)-\(g.line.twoAttempted)")
@@ -454,6 +492,14 @@ struct GameDetailView: View {
             }
         }
         .sheet(isPresented: $editing) { GameEditView(record: g) }
+        .confirmationDialog("Delete this game?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete Game", role: .destructive) {
+                season.delete(current)
+                onDelete()
+            }
+        } message: {
+            Text("Removes \(playerName)'s game\(current.opponent.isEmpty ? "" : " vs \(current.opponent)") from the season. This can't be undone.")
+        }
         .confirmationDialog("Resume this game?", isPresented: $confirmResume, titleVisibility: .visible) {
             Button("Save Current Game & Resume") { resume() }
         } message: {
