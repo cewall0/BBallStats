@@ -12,8 +12,15 @@ struct SeasonView: View {
     @Environment(Game.self) private var game
     @Environment(\.returnToGame) private var returnToGame
     private let season = SeasonStore.shared
+    @State private var tab: Tab = .players
+    @State private var viewedPlayerID: UUID?
     @State private var metric: Metric = .points
     @State private var showPlayers = false
+
+    enum Tab: String, CaseIterable, Identifiable {
+        case players = "Players", games = "Games"
+        var id: Self { self }
+    }
 
     enum Metric: String, CaseIterable, Identifiable {
         case points = "PTS", rebounds = "REB", assists = "AST", fieldGoal = "FG%"
@@ -30,34 +37,19 @@ struct SeasonView: View {
         }
     }
 
-    private var games: [GameRecord] { season.games(for: season.currentPlayerID) }
+    /// The player being browsed here; independent of who is being tracked on the main screen
+    private var viewedID: UUID? { viewedPlayerID ?? season.currentPlayerID }
+    private var games: [GameRecord] { season.games(for: viewedID) }
 
     var body: some View {
         List {
             Section {
-                PlayerMenu(showPlayers: $showPlayers)
-            }
-
-            if season.currentPlayer != nil, game.line != StatLine() {
-                Section {
-                    Button { returnToGame() } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(season.resumedGame.map { "Resumed: " + ($0.opponent.isEmpty ? "game" : "vs \($0.opponent)") } ?? "Current game")
-                                    .font(.headline)
-                                Text(game.line.summary).font(.subheadline)
-                            }
-                            .foregroundStyle(.primary)
-                            Spacer()
-                            Text("Back to game").font(.subheadline.bold()).foregroundStyle(Color.accentColor)
-                        }
-                    }
-                    .tint(.primary)
-                } header: {
-                    Text("In progress")
-                } footer: {
-                    Text("Saved on this phone as you go. Tap End Game when it's over to add it to the season.")
+                Picker("View", selection: $tab) {
+                    ForEach(Tab.allCases) { Text($0.rawValue).tag($0) }
                 }
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
 
             if season.players.isEmpty {
@@ -65,75 +57,260 @@ struct SeasonView: View {
                     Text("Add a player to start saving games to their season.")
                     Button("Add a player") { showPlayers = true }
                 }
-            } else if games.isEmpty {
-                Section {
-                    Text("No saved games yet. When a game ends, tap **End Game** and choose **Save & Start New Game** to add it here.")
-                }
+            } else if tab == .players {
+                playersTab
             } else {
-                Section("Season averages · \(games.count) game\(games.count == 1 ? "" : "s")") {
-                    AveragesGrid(averages: SeasonAverages(games.map(\.line)))
-                }
-
-                if games.count > 1 {
-                    Section {
-                        Picker("Stat", selection: $metric) {
-                            ForEach(Metric.allCases) { Text($0.rawValue).tag($0) }
-                        }
-                        .pickerStyle(.segmented)
-                        TrendChart(games: games.reversed(), metric: metric)
-                            .frame(height: 180)
-                    } header: {
-                        Text("Trend")
-                    }
-                }
-
-                Section("Games") {
-                    ForEach(games) { game in
-                        NavigationLink {
-                            GameDetailView(record: game, playerName: season.currentPlayer?.name ?? "")
-                        } label: {
-                            GameRow(game: game)
-                        }
-                    }
-                    .onDelete { offsets in
-                        offsets.map { games[$0] }.forEach(season.delete)
-                    }
-                }
+                gamesTab
             }
         }
         .navigationTitle("Season")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showPlayers) { PlayersView() }
     }
-}
 
-/// Shows the current player; switches players or opens player management.
-struct PlayerMenu: View {
-    @Environment(Game.self) private var game
-    private let season = SeasonStore.shared
-    @Binding var showPlayers: Bool
+    // MARK: Players: one player's season at a time, switched with name chips
 
-    var body: some View {
-        Menu {
-            ForEach(season.players) { player in
-                Button {
-                    season.switchTo(player.id, game: game)
-                } label: {
-                    PlayerMenuLabel(player: player)
+    @ViewBuilder private var playersTab: some View {
+        Section {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(season.players) { player in
+                        let selected = player.id == viewedID
+                        Button { viewedPlayerID = player.id } label: {
+                            Text(player.name)
+                                .font(.headline)
+                                .padding(.horizontal, 14)
+                                .frame(minWidth: 44, minHeight: 36)
+                                .background(Capsule().fill(selected ? Color.blue : Color.blue.opacity(0.12)))
+                                .foregroundStyle(selected ? Color.white : Color.blue)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(selected ? .isSelected : [])
+                    }
+                    Button { showPlayers = true } label: {
+                        Image(systemName: "person.2.fill")
+                            .font(.headline)
+                            .frame(minWidth: 44, minHeight: 36)
+                            .background(Capsule().fill(Color.blue.opacity(0.12)))
+                            .foregroundStyle(Color.blue)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Manage players")
                 }
             }
-            Divider()
-            Button("Manage players…", systemImage: "person.2") { showPlayers = true }
-        } label: {
-            HStack {
-                Image(systemName: "person.crop.circle.fill").font(.title2)
-                Text(season.currentPlayer?.name ?? "No player")
-                    .font(.title3.bold())
-                Spacer()
-                Image(systemName: "chevron.up.chevron.down").foregroundStyle(.secondary)
+            .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+        }
+
+        if viewedID == season.currentPlayerID, game.line != StatLine() {
+            Section {
+                Button { returnToGame() } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(season.resumedGame.map { "Resumed: " + ($0.opponent.isEmpty ? "game" : "vs \($0.opponent)") } ?? "Current game")
+                                .font(.headline)
+                            Text(game.line.summary).font(.subheadline)
+                        }
+                        .foregroundStyle(.primary)
+                        Spacer()
+                        Text("Back to game").font(.subheadline.bold()).foregroundStyle(Color.accentColor)
+                    }
+                }
+                .tint(.primary)
+            } header: {
+                Text("In progress")
+            } footer: {
+                Text("Saved on this phone as you go. Tap End Game when it's over to add it to the season.")
             }
         }
-        .accessibilityLabel("Player: \(season.currentPlayer?.name ?? "none"). Change player")
+
+        if games.isEmpty {
+            Section {
+                Text("No saved games yet. When a game ends, tap **End Game** and choose **Save & Start New Game** to add it here.")
+            }
+        } else {
+            Section("Season averages · \(games.count) game\(games.count == 1 ? "" : "s")") {
+                AveragesGrid(averages: SeasonAverages(games.map(\.line)))
+            }
+
+            if games.count > 1 {
+                Section {
+                    Picker("Stat", selection: $metric) {
+                        ForEach(Metric.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    TrendChart(games: games.reversed(), metric: metric)
+                        .frame(height: 180)
+                } header: {
+                    Text("Trend")
+                }
+            }
+
+            Section("Games") {
+                ForEach(games) { record in
+                    NavigationLink {
+                        GamePager(games: games, startID: record.id)
+                    } label: {
+                        GameRow(game: record)
+                    }
+                }
+                .onDelete { offsets in
+                    offsets.map { games[$0] }.forEach(season.delete)
+                }
+            }
+        }
+    }
+
+    // MARK: Games: each game with every player tracked in it
+
+    @ViewBuilder private var gamesTab: some View {
+        let teamGames = season.teamGames
+        if teamGames.isEmpty {
+            Section {
+                Text("No saved games yet. When a game ends, tap **End Game** and choose **Save & Start New Game** to add it here.")
+            }
+        } else {
+            Section {
+                ForEach(teamGames) { teamGame in
+                    NavigationLink {
+                        TeamGameView(teamGame: teamGame)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack {
+                                Text(teamGame.opponent.isEmpty ? "Game" : "vs \(teamGame.opponent)").font(.headline)
+                                Spacer()
+                                Text(teamGame.date.formatted(date: .abbreviated, time: .omitted))
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            Text(teamGame.records.map { "\(season.name(of: $0.playerID)) \($0.line.points)" }.joined(separator: " · "))
+                                .font(.subheadline)
+                                .lineLimit(2)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+            } header: {
+                Text("\(teamGames.count) game\(teamGames.count == 1 ? "" : "s")")
+            } footer: {
+                Text("Tap a game to see every player's box score from it.")
+            }
+        }
+    }
+}
+
+/// Every player's box score from one game.
+struct TeamGameView: View {
+    let teamGame: TeamGame
+    private let season = SeasonStore.shared
+
+    var body: some View {
+        List {
+            Section {
+                Grid(alignment: .trailing, horizontalSpacing: 10, verticalSpacing: 10) {
+                    GridRow {
+                        Text("Player").gridColumnAlignment(.leading)
+                        Text("PTS"); Text("REB"); Text("AST"); Text("STL"); Text("BLK"); Text("FG")
+                    }
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+                    Divider()
+                    ForEach(teamGame.records) { r in
+                        GridRow {
+                            Text(season.name(of: r.playerID)).font(.headline).lineLimit(1).gridColumnAlignment(.leading)
+                            Text("\(r.line.points)").bold()
+                            Text("\(r.line.rebounds)"); Text("\(r.line.assists)")
+                            Text("\(r.line.steals)"); Text("\(r.line.blocks)")
+                            Text("\(r.line.fieldGoalsMade)-\(r.line.fieldGoalsAttempted)")
+                        }
+                        .monospacedDigit()
+                        .accessibilityElement(children: .combine)
+                    }
+                    if teamGame.records.count > 1 {
+                        Divider()
+                        GridRow {
+                            Text("Team").font(.headline).gridColumnAlignment(.leading)
+                            Text("\(teamGame.totalPoints)").bold()
+                            Text("\(teamGame.records.map(\.line.rebounds).reduce(0, +))")
+                            Text("\(teamGame.records.map(\.line.assists).reduce(0, +))")
+                            Text("\(teamGame.records.map(\.line.steals).reduce(0, +))")
+                            Text("\(teamGame.records.map(\.line.blocks).reduce(0, +))")
+                            Text("\(teamGame.records.map(\.line.fieldGoalsMade).reduce(0, +))-\(teamGame.records.map(\.line.fieldGoalsAttempted).reduce(0, +))")
+                        }
+                        .monospacedDigit()
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+                .padding(.vertical, 4)
+            } header: {
+                Text(teamGame.date.formatted(date: .complete, time: .omitted))
+            }
+
+            Section {
+                ForEach(teamGame.records) { r in
+                    NavigationLink {
+                        GamePager(games: season.games(for: r.playerID), startID: r.id)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(season.name(of: r.playerID)).font(.headline)
+                            Text(r.line.summary).font(.subheadline)
+                        }
+                    }
+                }
+            } header: {
+                Text("Players")
+            } footer: {
+                Text("Tap a player for their full box score, share card, edit and resume.")
+            }
+        }
+        .navigationTitle(teamGame.opponent.isEmpty ? "Game" : "vs \(teamGame.opponent)")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// A player's games, one per page: swipe left and right between them.
+struct GamePager: View {
+    let games: [GameRecord]   // newest first
+    @State private var selection: UUID
+    private let season = SeasonStore.shared
+
+    init(games: [GameRecord], startID: UUID) {
+        self.games = games
+        _selection = State(initialValue: startID)
+    }
+
+    private var index: Int { games.firstIndex { $0.id == selection } ?? 0 }
+    private var current: GameRecord? {
+        season.games.first { $0.id == selection } ?? games.first { $0.id == selection }
+    }
+
+    var body: some View {
+        TabView(selection: $selection) {
+            ForEach(games) { record in
+                GameDetailView(record: record, playerName: season.name(of: record.playerID))
+                    .tag(record.id)
+            }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle(current.map { $0.opponent.isEmpty ? "Game" : "vs \($0.opponent)" } ?? "Game")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if games.count > 1 {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 0) {
+                        Text(current.map { $0.opponent.isEmpty ? "Game" : "vs \($0.opponent)" } ?? "Game").font(.headline)
+                        Text("\(index + 1) of \(games.count) · swipe for more").font(.caption2).foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                if let g = current, let image = ShareCard.render(game: g, playerName: season.name(of: g.playerID)) {
+                    ShareLink(item: image, preview: SharePreview("\(season.name(of: g.playerID)) – \(g.line.summary)", image: image)) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -274,17 +451,6 @@ struct GameDetailView: View {
                 row("Blocks", "\(g.line.blocks)")
                 row("Turnovers", "\(g.line.turnovers)")
                 row("Fouls", "\(g.line.fouls)")
-            }
-        }
-        .navigationTitle(g.opponent.isEmpty ? "Game" : "vs \(g.opponent)")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                if let image = ShareCard.render(game: g, playerName: playerName) {
-                    ShareLink(item: image, preview: SharePreview("\(playerName) – \(g.line.summary)", image: image)) {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
-                }
             }
         }
         .sheet(isPresented: $editing) { GameEditView(record: g) }

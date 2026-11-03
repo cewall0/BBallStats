@@ -37,6 +37,17 @@ struct GameRecord: Codable, Identifiable, Hashable {
     var date: Date
     var opponent: String
     var line: StatLine
+    /// Shared by every player's record saved from the same game (nil for games saved before 1.5 builds 9+)
+    var teamGameID: UUID? = nil
+}
+
+/// One game across all the players tracked in it.
+struct TeamGame: Identifiable {
+    let id: String
+    let date: Date
+    let opponent: String
+    let records: [GameRecord]
+    var totalPoints: Int { records.map(\.line.points).reduce(0, +) }
 }
 
 /// Per-game averages and shooting percentages over a set of games.
@@ -104,6 +115,28 @@ final class SeasonStore {
         games.filter { $0.playerID == playerID }.sorted { $0.date > $1.date }
     }
 
+    func name(of playerID: UUID) -> String {
+        players.first { $0.id == playerID }?.name ?? "Player"
+    }
+
+    /// Saved games grouped across players, newest first. Records saved together share a team game ID;
+    /// older records are grouped by day and opponent.
+    var teamGames: [TeamGame] {
+        let calendar = Calendar.current
+        let groups = Dictionary(grouping: games) { record -> String in
+            if let team = record.teamGameID { return team.uuidString }
+            let day = calendar.startOfDay(for: record.date).timeIntervalSince1970
+            return "\(Int(day))|\(record.opponent.lowercased())"
+        }
+        let order = Dictionary(uniqueKeysWithValues: players.enumerated().map { ($1.id, $0) })
+        return groups.map { key, records in
+            let sorted = records.sorted { (order[$0.playerID] ?? .max) < (order[$1.playerID] ?? .max) }
+            return TeamGame(id: key, date: records.map(\.date).max() ?? .now,
+                            opponent: records.first(where: { !$0.opponent.isEmpty })?.opponent ?? "", records: sorted)
+        }
+        .sorted { $0.date > $1.date }
+    }
+
     @discardableResult
     func addPlayer(named name: String) -> Player {
         let player = Player(name: name.trimmingCharacters(in: .whitespaces))
@@ -144,17 +177,17 @@ final class SeasonStore {
 
     /// Ends a player's game: saves it to their season, or updates the saved game they resumed.
     func record(_ line: StatLine, opponent: String, for playerID: UUID) {
-        store(line, opponent: opponent, for: playerID, date: .now)
+        store(line, opponent: opponent, for: playerID, date: .now, teamGameID: UUID())
         save()
     }
 
-    private func store(_ line: StatLine, opponent: String, for playerID: UUID, date: Date) {
+    private func store(_ line: StatLine, opponent: String, for playerID: UUID, date: Date, teamGameID: UUID) {
         let opponent = opponent.trimmingCharacters(in: .whitespaces)
         if let id = resumed.removeValue(forKey: playerID), let i = games.firstIndex(where: { $0.id == id }) {
             games[i].line = line
             games[i].opponent = opponent
         } else {
-            games.append(GameRecord(playerID: playerID, date: date, opponent: opponent, line: line))
+            games.append(GameRecord(playerID: playerID, date: date, opponent: opponent, line: line, teamGameID: teamGameID))
         }
     }
 
@@ -167,7 +200,7 @@ final class SeasonStore {
     /// already had in progress is saved to their season first, so nothing is lost.
     func resume(_ record: GameRecord, game: Game) {
         if currentPlayerID != record.playerID { switchTo(record.playerID, game: game) }
-        if game.line != StatLine() { store(game.line, opponent: "", for: record.playerID, date: .now) }
+        if game.line != StatLine() { store(game.line, opponent: "", for: record.playerID, date: .now, teamGameID: UUID()) }
         game.line = record.line
         resumed[record.playerID] = record.id
         game.save()
@@ -191,9 +224,10 @@ final class SeasonStore {
     /// and clears their game in progress. Players not chosen keep theirs.
     func endGame(saving ids: Set<UUID>, onScreen line: StatLine, opponent: String) {
         let date = Date.now
+        let teamGameID = UUID()
         for id in ids {
             let stats = id == currentPlayerID ? line : liveGames[id]
-            if let stats { store(stats, opponent: opponent, for: id, date: date) }
+            if let stats { store(stats, opponent: opponent, for: id, date: date, teamGameID: teamGameID) }
             liveGames[id] = nil
         }
         save()
@@ -232,16 +266,18 @@ final class SeasonStore {
         let jack = Player(name: "Jack")
         players = [ava, jack] + ["Mia", "Leo", "Zoe", "Sam"].map { Player(name: $0) }
         let opponents = ["Eagles", "Wildcats", "Hornets", "Tigers", "Panthers", "Rockets", "Falcons", "Bulldogs"]
-        let points = [8, 12, 6, 14, 11, 16, 13, 18]
-        games = opponents.enumerated().map { i, opp in
-            let p = points[i]
+        func line(points p: Int, _ i: Int) -> StatLine {
             let threes = i % 3, fts = (i + 1) % 3
-            let twos = (p - threes * 3 - fts) / 2
-            let line = StatLine(points: twos * 2 + threes * 3 + fts, twoMade: twos, twoAttempted: twos + 3 + i % 2,
-                                threeMade: threes, threeAttempted: threes + 2, ftMade: fts, ftAttempted: fts + 1,
-                                rebounds: 3 + i % 4, assists: 2 + i % 3, steals: 1 + i % 2, blocks: i % 2, turnovers: 2 - i % 2, fouls: 2)
-            return GameRecord(playerID: ava.id, date: Calendar.current.date(byAdding: .day, value: (i - opponents.count) * 4, to: .now)!,
-                              opponent: opp, line: line)
+            let twos = max(0, (p - threes * 3 - fts) / 2)
+            return StatLine(points: twos * 2 + threes * 3 + fts, twoMade: twos, twoAttempted: twos + 3 + i % 2,
+                            threeMade: threes, threeAttempted: threes + 2, ftMade: fts, ftAttempted: fts + 1,
+                            rebounds: 3 + i % 4, assists: 2 + i % 3, steals: 1 + i % 2, blocks: i % 2, turnovers: 2 - i % 2, fouls: 2)
+        }
+        games = opponents.enumerated().flatMap { i, opp -> [GameRecord] in
+            let date = Calendar.current.date(byAdding: .day, value: (i - opponents.count) * 4, to: .now)!
+            let team = UUID()
+            return [GameRecord(playerID: ava.id, date: date, opponent: opp, line: line(points: [8, 12, 6, 14, 11, 16, 13, 18][i], i), teamGameID: team),
+                    GameRecord(playerID: jack.id, date: date, opponent: opp, line: line(points: [4, 6, 9, 5, 10, 7, 8, 12][i], i + 1), teamGameID: team)]
         }
         currentPlayerID = ava.id
     }
