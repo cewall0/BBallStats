@@ -29,6 +29,7 @@ struct BBallStatsApp: App {
         WindowGroup {
                 SplashScreenView()
                 .environment(game)
+                .tint(.brandOrange)
                 .onChange(of: scenePhase) { _, phase in
                     if phase != .active { game.save() } // keep the stats if iOS closes the app
                 }

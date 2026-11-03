@@ -57,6 +57,34 @@ enum Stat: CaseIterable, Identifiable {
         }
     }
 
+    /// Short name for the Undo button ("Undo +2", "Undo Reb")
+    var shortName: String {
+        switch self {
+        case .madeTwo: return "+2"
+        case .missedTwo: return "Miss 2"
+        case .madeThree: return "+3"
+        case .missedThree: return "Miss 3"
+        case .madeFreeThrow: return "+1 FT"
+        case .missedFreeThrow: return "Miss FT"
+        case .turnover: return "TO"
+        case .foul: return "Foul"
+        case .rebound: return "Reb"
+        case .assist: return "Ast"
+        case .steal: return "Stl"
+        case .block: return "Blk"
+        }
+    }
+
+    /// Points the stat adds
+    var points: Int {
+        switch self {
+        case .madeTwo: return 2
+        case .madeThree: return 3
+        case .madeFreeThrow: return 1
+        default: return 0
+        }
+    }
+
     /// What VoiceOver reads
     var spokenName: String {
         switch self {

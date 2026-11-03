@@ -81,8 +81,8 @@ struct SeasonView: View {
                                 .font(.headline)
                                 .padding(.horizontal, 14)
                                 .frame(minWidth: 44, minHeight: 36)
-                                .background(Capsule().fill(selected ? Color.blue : Color.blue.opacity(0.12)))
-                                .foregroundStyle(selected ? Color.white : Color.blue)
+                                .background(Capsule().fill(selected ? Color.brandOrange : Color.brandOrange.opacity(0.14)))
+                                .foregroundStyle(selected ? Color.white : Color.brandOrange)
                         }
                         .buttonStyle(.plain)
                         .accessibilityAddTraits(selected ? .isSelected : [])
@@ -91,8 +91,8 @@ struct SeasonView: View {
                         Image(systemName: "person.2.fill")
                             .font(.headline)
                             .frame(minWidth: 44, minHeight: 36)
-                            .background(Capsule().fill(Color.blue.opacity(0.12)))
-                            .foregroundStyle(Color.blue)
+                            .background(Capsule().fill(Color.brandOrange.opacity(0.14)))
+                            .foregroundStyle(Color.brandOrange)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Manage players")
@@ -824,7 +824,7 @@ struct PlayerSwitcher: View {
         .font(.system(size: fontSize, weight: .bold))
         .padding(.horizontal, 14)
         .frame(minWidth: 44, minHeight: 40)
-        .background(Capsule().fill(selected ? Color.blue : Color.blue.opacity(0.12)))
-        .foregroundStyle(selected ? Color.white : Color.blue)
+        .background(Capsule().fill(selected ? Color.brandOrange : Color.brandOrange.opacity(0.14)))
+        .foregroundStyle(selected ? Color.white : Color.brandOrange)
     }
 }
