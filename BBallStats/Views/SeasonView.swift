@@ -276,6 +276,28 @@ struct TeamGameView: View {
         }
         .navigationTitle(teamGame.opponent.isEmpty ? "Game" : "vs \(teamGame.opponent)")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    if let image = TeamShareCard.render(teamGame) {
+                        ShareLink(item: image, preview: SharePreview(TeamExport.title(teamGame), image: image)) {
+                            Label("Share Image", systemImage: "photo")
+                        }
+                    }
+                    ShareLink(item: TeamExport.text(teamGame)) {
+                        Label("Share as Text", systemImage: "text.alignleft")
+                    }
+                    if let csv = TeamExport.csvFile(teamGame) {
+                        ShareLink(item: csv) {
+                            Label("Export Spreadsheet (CSV)", systemImage: "tablecells")
+                        }
+                    }
+                } label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel("Share box score")
+            }
+        }
         .confirmationDialog("Delete this game?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 teamGame.records.forEach(season.delete)
@@ -826,5 +848,110 @@ struct PlayerSwitcher: View {
         .frame(minWidth: 44, minHeight: 40)
         .background(Capsule().fill(selected ? Color.brandOrange : Color.brandOrange.opacity(0.14)))
         .foregroundStyle(selected ? Color.white : Color.brandOrange)
+    }
+}
+
+/// Box score for everyone in a game, for sharing.
+enum TeamExport {
+    private static var season: SeasonStore { .shared }
+
+    static func title(_ g: TeamGame) -> String {
+        (g.opponent.isEmpty ? "Game" : "vs \(g.opponent)") + " (" + g.date.formatted(date: .abbreviated, time: .omitted) + ")"
+    }
+
+    /// For a group text: one line per player, then the team total.
+    static func text(_ g: TeamGame) -> String {
+        var lines = [title(g)]
+        lines += g.records.map { "\(season.name(of: $0.playerID)): \($0.line.summary) (\($0.line.shooting))" }
+        if g.records.count > 1 { lines.append("Team: \(g.totalPoints) pts") }
+        lines.append("Tracked with My BBaller Stats")
+        return lines.joined(separator: "\n")
+    }
+
+    /// Every stat for every player plus a team row, as a CSV file for Excel or Numbers.
+    static func csvFile(_ g: TeamGame) -> URL? {
+        func field(_ s: String) -> String { "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" }
+        func row(_ name: String, _ l: StatLine) -> String {
+            ([field(name)] + [l.points, l.twoMade, l.twoAttempted, l.threeMade, l.threeAttempted, l.ftMade, l.ftAttempted,
+                             l.rebounds, l.assists, l.steals, l.blocks, l.turnovers, l.fouls].map(String.init)).joined(separator: ",")
+        }
+        var total = StatLine()
+        for r in g.records {
+            let l = r.line
+            total.points += l.points; total.twoMade += l.twoMade; total.twoAttempted += l.twoAttempted
+            total.threeMade += l.threeMade; total.threeAttempted += l.threeAttempted
+            total.ftMade += l.ftMade; total.ftAttempted += l.ftAttempted
+            total.rebounds += l.rebounds; total.assists += l.assists; total.steals += l.steals
+            total.blocks += l.blocks; total.turnovers += l.turnovers; total.fouls += l.fouls
+        }
+        var lines = ["Game,\(field(title(g)))",
+                     "Player,PTS,2PM,2PA,3PM,3PA,FTM,FTA,REB,AST,STL,BLK,TO,PF"]
+        lines += g.records.map { row(season.name(of: $0.playerID), $0.line) }
+        if g.records.count > 1 { lines.append(row("Team", total)) }
+        let name = "Box Score " + title(g).replacingOccurrences(of: "/", with: "-") + ".csv"
+        let url = URL.temporaryDirectory.appending(path: name)
+        do {
+            try ("\u{FEFF}" + lines.joined(separator: "\n") + "\n").write(to: url, atomically: true, encoding: .utf8)
+            return url
+        } catch {
+            return nil
+        }
+    }
+}
+
+/// Team box-score image: same look as the player share card.
+struct TeamShareCard: View {
+    let teamGame: TeamGame
+    private let season = SeasonStore.shared
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "basketball.fill").foregroundStyle(.orange)
+                Text(teamGame.opponent.isEmpty ? "Game" : "vs \(teamGame.opponent)").font(.title2.bold())
+                Spacer()
+                Text(teamGame.date.formatted(date: .abbreviated, time: .omitted)).font(.subheadline)
+            }
+            Grid(alignment: .trailing, horizontalSpacing: 12, verticalSpacing: 6) {
+                GridRow {
+                    Text("").gridColumnAlignment(.leading)
+                    Text("PTS"); Text("REB"); Text("AST"); Text("STL"); Text("BLK")
+                }
+                .font(.caption.bold())
+                .opacity(0.8)
+                ForEach(teamGame.records) { r in
+                    GridRow {
+                        Text(season.name(of: r.playerID)).font(.headline).lineLimit(1).gridColumnAlignment(.leading)
+                        Text("\(r.line.points)").font(.headline)
+                        Text("\(r.line.rebounds)"); Text("\(r.line.assists)"); Text("\(r.line.steals)"); Text("\(r.line.blocks)")
+                    }
+                    .monospacedDigit()
+                }
+                if teamGame.records.count > 1 {
+                    Divider().overlay(Color.white.opacity(0.4))
+                    GridRow {
+                        Text("Team").font(.headline).gridColumnAlignment(.leading)
+                        Text("\(teamGame.totalPoints)").font(.title3.weight(.heavy))
+                        Text("\(teamGame.records.map(\.line.rebounds).reduce(0, +))")
+                        Text("\(teamGame.records.map(\.line.assists).reduce(0, +))")
+                        Text("\(teamGame.records.map(\.line.steals).reduce(0, +))")
+                        Text("\(teamGame.records.map(\.line.blocks).reduce(0, +))")
+                    }
+                    .monospacedDigit()
+                }
+            }
+            Text("Tracked with My BBaller Stats").font(.caption2).opacity(0.8).frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .padding(18)
+        .foregroundStyle(.white)
+        .background(LinearGradient(colors: [Color(red: 0.0, green: 0.39, blue: 0.0), Color(red: 0.0, green: 0.25, blue: 0.1)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing))
+    }
+
+    @MainActor
+    static func render(_ teamGame: TeamGame) -> Image? {
+        let renderer = ImageRenderer(content: TeamShareCard(teamGame: teamGame).frame(width: 380))
+        renderer.scale = 3
+        return renderer.uiImage.map { Image(uiImage: $0) }
     }
 }
